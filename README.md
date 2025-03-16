@@ -9,17 +9,33 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
 - **Estatísticas Individuais:** Veja seu desempenho no campeonato.
 - **Ranking de Artilheiros:** Consulte a lista de jogadores com mais gols.
 - **Estatísticas de Partidas:** Acesse dados detalhados sobre cada jogo.
-- **Feed de Notícias:** Receba atualizações importantes sobre o campeonato.
+
 
 ### ⚙️ Para Administradores:
 - **Cadastro de Times e Jogadores:** Gerencie os participantes do campeonato.
 - **Criação de Partidas:** Defina data, horário, local e equipes.
 - **Atualização da Tabela de Classificação:** Mantenha os dados do campeonato sempre corretos.
 - **Registro de Gols, Cartões e Estatísticas:** Mantenha um histórico detalhado das partidas.
-- **Publicação no Feed de Notícias:** Informe participantes sobre novidades.
 
-## 🔄 Processos de Desenvolvimento:
-### 📖 Histórias com Cenários dos Usuários:
+
+
+## 👥 Equipe de Desenvolvimento
+
+👨‍💻 Davi Arruda Beltrão - dab@cesar.school
+
+👨‍💻 Gabriel Nascimento Belo Osório - gnbo2@cesar.school
+
+👨‍💻 Jarbas Esteves Assis Neto - jean@cesar.school
+
+👨‍💻 Leandro Veras Padilha Filho - lvpf@cesar.school
+
+👨‍💻 Rodrigo José Dantas de Oliveira - rjdo@cesar.school
+
+👨‍💻 Victor Tien Fah Uen - vtfu@cesar.school
+
+## ✅ Entrega 01:
+### 🔄 Processos de Desenvolvimento:
+#### 📖 Histórias com Cenários dos Usuários:
 - **Link para Histórias:** https://docs.google.com/document/d/1CfupgNa50fx81Sfj4yjvc8pKxqfcMIGDc83vhO446eg/edit?usp=sharing
 
 ### 🎨 Figma:
@@ -28,17 +44,3 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
 
 ### 📋 Jira:
 - **Quadro e Backlog:** (prints do quadro e backlog do Jira aqui)
-
-## 👥 Equipe de Desenvolvimento
-
-👨‍💻 Davi Arruda Beltrão - dab@cesar.school
-
-👩‍💻 Gabriel Nascimento Belo Osório - gnbo2@cesar.school
-
-👩‍💻 Jarbas Esteves Assis Neto - jean@cesar.school
-
-👩‍💻 Leandro Veras Padilha Filho - lvpf@cesar.school
-
-👩‍💻 Rodrigo José Dantas de Oliveira - rjdo@cesar.school
-
-👩‍💻 Victor Tien Fah Uen - vtfu@cesar.school
