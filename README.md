@@ -18,7 +18,6 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
 - **Registro de Gols, Cartões e Estatísticas:** Mantenha um histórico detalhado das partidas.
 
 
-
 ## 👥 Equipe de Desenvolvimento
 
 👨‍💻 Davi Arruda Beltrão - dab@cesar.school
@@ -33,14 +32,19 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
 
 👨‍💻 Victor Tien Fah Uen - vtfu@cesar.school
 
-## ✅ Entrega 01:
-### 🔄 Processos de Desenvolvimento:
-#### 📖 Histórias com Cenários dos Usuários:
-- **Link para Histórias:** https://docs.google.com/document/d/1CfupgNa50fx81Sfj4yjvc8pKxqfcMIGDc83vhO446eg/edit?usp=sharing
+## Links importantes
 
-### 🎨 Figma:
-- **Sketches das Histórias:** (Sketches e Storyboards do Figma aqui) 
-- **Screencast:** 
 
-### 📋 Jira:
-- **Quadro e Backlog:** 
+[Figma](https://www.figma.com/design/5ArQVPK11yIL3R4x4tkxAG/Bola-na-Gaveta?node-id=0-1&p=f&t=Tkn20FqmP4lzI3k0-0)
+
+[Histórias](https://docs.google.com/document/d/1CfupgNa50fx81Sfj4yjvc8pKxqfcMIGDc83vhO446eg/edit?usp=sharing)
+<details>
+  <summary>Entrega 01</summary>
+
+  Backlog jira
+  ![backlog jira](images/backlog Jira.png)
+  
+  Quadro jira 
+  ![Quadro jira](images/Quadro jira.png)
+</details>
+
