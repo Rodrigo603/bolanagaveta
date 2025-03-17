@@ -1,4 +1,4 @@
-# 🏆 Sistema de Gerenciamento de Campeonatos
+# 🏆 BOLA NA GAVETA
 
 ## 📌 Visão Geral
 Este é um sistema web desenvolvido em **Django**, projetado para facilitar a organização e administração de campeonatos esportivos. Com essa aplicação, jogadores, administradores e torcedores podem acompanhar as estatísticas, resultados, classificação e muito mais.
@@ -43,4 +43,4 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
 - **Screencast:** 
 
 ### 📋 Jira:
-- **Quadro e Backlog:** (prints do quadro e backlog do Jira aqui)
+- **Quadro e Backlog:** 
