@@ -36,7 +36,7 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
 
 
 [Figma](https://www.figma.com/design/5ArQVPK11yIL3R4x4tkxAG/Bola-na-Gaveta?node-id=0-1&p=f&t=Tkn20FqmP4lzI3k0-0)
-
+[Jira](https://bolanagaveta.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog?atlOrigin=eyJpIjoiMjcwOTVjMjM0MDZmNDMwNzhhZjVlMWY2ZTg0MWFkNjAiLCJwIjoiaiJ9)
 
 ## Entregas ✅
 
