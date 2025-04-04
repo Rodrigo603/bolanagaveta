@@ -1,0 +1,18 @@
+{% load static %}
+<h1>Editar Competição</h1>
+
+<form method="post">
+  {% csrf_token %}
+  <label>Nome:</label><br>
+  <input type="text" name="nome" value="{{ competicao.nome }}"><br><br>
+
+  <label>Número de times:</label><br>
+  <input type="number" name="numero_de_times" value="{{ competicao.numero_de_times }}"><br><br>
+
+  <label>Local:</label><br>
+  <input type="text" name="local" value="{{ competicao.local }}"><br><br>
+
+  <button type="submit">Salvar</button>
+</form>
+
+<a href="{% url 'lista_competicoes' %}">Voltar</a>

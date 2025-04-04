@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
@@ -64,5 +64,21 @@ def lista_competicoes(request):
     competicoes = Competicao.objects.all()  
     return render(request, "lista_competicoes.html", {'competicoes': competicoes})
 
+def editar_competicao(request,id):
 
-    
+    competicao = get_object_or_404(Competicao, id=id)
+
+    if request.method == 'POST':
+        competicao.nome = request.POST.get('nome')
+        competicao.numero_de_times = request.POST.get('numero_de_times')
+        competicao.local = request.POST.get('local')
+        competicao.save()
+        return redirect('lista_competicoes')
+
+    return render(request, 'editar_competicao.html', {'competicao': competicao})
+
+def excluir_competicao(request, id):
+    competicao = get_object_or_404(Competicao, id=id)
+    if request.method == 'POST':
+        competicao.delete()
+    return redirect('lista_competicoes')
