@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Competições</title>
+</head>
+<body>
+    <h1>Competições Cadastradas</h1>
+    <ul>
+        {% for competicao in competicoes %}
+            <li>{{ competicao.nome }} - {{ competicao.local }} ({{ competicao.numero_de_times }} times)</li>
+        {% empty %}
+            <li>Nenhuma competição cadastrada.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url "criar_competicao" %}">Criar nova competição</a>
+</body>
+</html>

@@ -42,3 +42,27 @@ from django.shortcuts import render
 
 def index_view(request):
     return render(request, "index.html")  # Renderiza a página inicial
+
+from .models import Competicao
+def criar_competicao(request):
+    if request.method == "POST":
+        nome = request.POST.get("nome")
+        numero_de_times = request.POST.get("numero_de_times")
+        local = request.POST.get("local")
+
+        if nome and numero_de_times and local:
+            Competicao.objects.create(
+                nome=nome,
+                numero_de_times = int(numero_de_times),
+                local=local
+            )
+            return redirect("lista_competicoes")
+    return render(request,"criar_competicao.html")
+
+
+def lista_competicoes(request):
+    competicoes = Competicao.objects.all()  
+    return render(request, "lista_competicoes.html", {'competicoes': competicoes})
+
+
+    

@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Competição</title>
+</head>
+<body>
+    <h1>Criar Nova Competição</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label>Nome:</label>
+        <input type="text" name="nome" required><br>
+
+        <label>Número de Times:</label>
+        <input type="number" name="numero_de_times" required><br>
+
+        <label>Local:</label>
+        <input type="text" name="local" required><br>
+
+        <button type="submit">Salvar</button>
+    </form>
+    <a href="{% url "lista_competicoes" %}">Ver todas</a>
+</body>
+</html>
