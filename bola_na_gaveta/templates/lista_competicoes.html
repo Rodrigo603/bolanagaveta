@@ -12,13 +12,19 @@
         {% for competicao in competicoes %}
             <li>
                 {{ competicao.nome }} - {{ competicao.local }} ({{ competicao.numero_de_times }} times)
-                [<a href="{% url 'editar_competicao' competicao.id %}">Editar</a>
+                [<a href="{% url 'editar_competicao' competicao.id %}">Editar</a>]
+
+                <form action="{% url 'excluir_competicao' competicao.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('Tem certeza que deseja excluir {{ competicao.nome }}?')">
+                        Excluir
+                    </button>
+                </form>
             </li>
         {% empty %}
             <li>Nenhuma competição cadastrada.</li>
         {% endfor %}
     </ul>
-
     <a href="{% url 'criar_competicao' %}">Criar nova competição</a>
 </body>
 </html>
