@@ -6,8 +6,8 @@
 <form method="post">
   {% csrf_token %}
 
-  <a href="{% url 'adicionar_time' competicao.id %}">
-    <button type="button">Adicionar Time</button>
+  <a href="{% url 'editar_times' competicao.id %}">
+    <button type="button">Editar Times</button>
   </a>
   <br><br>
   <label>Nome:</label><br>
