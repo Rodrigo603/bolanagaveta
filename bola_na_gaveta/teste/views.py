@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden #Restringe Acesso para cada perfil
 
 
 def login_view(request):
@@ -51,7 +53,12 @@ def index_view(request):
     return render(request, "index.html")  # Renderiza a página inicial
 
 from .models import Competicao
+@login_required # Victor -  Restringe o acesso para cria_competição só para usuário logado
 def criar_competicao(request):
+    if request.user.perfil.tipo_usuario != 'gerenciador':
+        return HttpResponseForbidden("Apenas gerenciadores podem acessar essa página.")
+
+
     if request.method == "POST":
         nome = request.POST.get("nome")
         numero_de_times = request.POST.get("numero_de_times")
@@ -71,6 +78,7 @@ def lista_competicoes(request):
     competicoes = Competicao.objects.all()  
     return render(request, "lista_competicoes.html", {'competicoes': competicoes})
 
+@login_required
 def editar_competicao(request,id):
 
     competicao = get_object_or_404(Competicao, id=id)
@@ -84,8 +92,38 @@ def editar_competicao(request,id):
 
     return render(request, 'editar_competicao.html', {'competicao': competicao})
 
+@login_required
 def excluir_competicao(request, id):
     competicao = get_object_or_404(Competicao, id=id)
     if request.method == 'POST':
         competicao.delete()
     return redirect('lista_competicoes')
+
+from django.contrib.auth.models import User
+from .models import Time, Competicao
+
+@login_required
+def adicionar_time(request, competicao_id):
+    competicao = get_object_or_404(Competicao, id=competicao_id)
+
+    if request.user.perfil.tipo_usuario != 'gerenciador':
+        return HttpResponseForbidden("Apenas gerenciadores podem adicionar times.")
+
+    if competicao.times.count() >= competicao.numero_de_times:
+        return HttpResponseForbidden("Limite de times atingido para esta competição.")
+
+    jogadores = User.objects.filter(perfil__tipo_usuario='jogador')
+
+    if request.method == "POST":
+        nome_time = request.POST.get("nome_time")
+        jogadores_ids = request.POST.getlist("jogadores")
+
+        if nome_time and jogadores_ids:
+            time = Time.objects.create(nome=nome_time, competicao=competicao)
+            time.jogadores.set(jogadores_ids)
+            return redirect("lista_competicoes")
+
+    return render(request, "adicionar_time.html", {
+        "competicao": competicao,
+        "jogadores": jogadores
+    })

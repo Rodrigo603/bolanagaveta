@@ -21,4 +21,14 @@ class Competicao(models.Model):
 
     def __str__(self):
         return self.nome
+    
+
+class Time(models.Model):
+    nome = models.CharField(max_length=100)
+    competicao = models.ForeignKey(Competicao, on_delete=models.CASCADE, related_name='times')
+    jogadores = models.ManyToManyField(User)
+
+    def __str__(self):
+        return self.nome
+    
 # Create your models here.

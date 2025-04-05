@@ -3,6 +3,11 @@
 
 <form method="post">
   {% csrf_token %}
+
+  <a href="{% url 'adicionar_time' competicao.id %}">
+    <button type="button">Adicionar Time</button>
+  </a>
+  <br><br>
   <label>Nome:</label><br>
   <input type="text" name="nome" value="{{ competicao.nome }}"><br><br>
 
