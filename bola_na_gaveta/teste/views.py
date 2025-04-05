@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
+
 def login_view(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -14,23 +15,29 @@ def login_view(request):
             return render(request, "login.html", {"erro": "Usuário ou senha inválidos"})
     return render(request, "login.html")
 
+#Victor 
+from .models import Perfil
+
 def cadastro_view(request):
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
         password1 = request.POST["password1"]
         password2 = request.POST["password2"]
-        
+        tipo_usuario = request.POST["tipo_usuario"] 
+
         if password1 == password2:
             if User.objects.filter(username=username).exists():
                 return render(request, "cadastro.html", {"erro": "Usuário já existe"})
             else:
                 user = User.objects.create_user(username=username, email=email, password=password1)
                 user.save()
+                # Cria o perfil com o tipo de usuário
+                Perfil.objects.create(user=user, tipo_usuario=tipo_usuario)
                 return redirect("login")
         else:
             return render(request, "cadastro.html", {"erro": "As senhas não coincidem"})
-    
+
     return render(request, "cadastro.html")
 
 def logout_view(request):

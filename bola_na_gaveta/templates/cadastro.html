@@ -7,6 +7,11 @@
     <h2>Cadastro</h2>
     <form method="POST">
         {% csrf_token %}
+        <label for="tipo_usuario">Tipo de usuário:</label>
+        <select name="tipo_usuario" required>
+            <option value="gerenciador">Gerenciador da Pelada</option>
+            <option value="jogador">Jogador</option>
+        </select><br><br>
         <input type="text" name="username" placeholder="Usuário" required><br><br>
         <input type="email" name="email" placeholder="E-mail" required><br><br>
         <input type="password" name="password1" placeholder="Senha" required><br><br>
