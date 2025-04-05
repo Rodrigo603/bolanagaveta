@@ -1,5 +1,7 @@
 {% load static %}
-<h1>Editar Competição</h1>
+<h1>Editar Competição
+  <link rel="stylesheet" href="{% static "styles.css" %}">
+</h1>
 
 <form method="post">
   {% csrf_token %}
