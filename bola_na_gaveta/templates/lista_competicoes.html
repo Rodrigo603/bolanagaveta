@@ -13,7 +13,7 @@
         <h1>Competições Cadastradas</h1>
         <ul>
             {% for competicao in competicoes %}
-            <li><div class = "ajeitar">
+            <div class = "ajeitar"><li>
                 {{ competicao.nome }} - {{ competicao.local }} ({{ competicao.numero_de_times }} times)
                 [<a href="{% url 'editar_competicao' competicao.id %}">Editar</a>]
                 
@@ -23,11 +23,12 @@
                         Excluir
                     </button>
                 </form>
-            </div></li>
+            </li>
             {% empty %}
-            <li>Nenhuma competição cadastrada.</li>
+            <div class = "ajeitar"r><li>Nenhuma competição cadastrada.</li></div>
             {% endfor %}
         </ul>
+    </div>
         <a href="{% url 'criar_competicao' %}">Criar nova competição</a>
     </div>
 </body>
