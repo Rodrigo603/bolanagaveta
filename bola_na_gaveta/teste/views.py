@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden #Restringe Acesso para cada perfil
+
 
 
 def login_view(request):
@@ -12,7 +12,13 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect("/")  # Redireciona para a home (pode ajustar)
+            # Victor - redireciona os perfis para suas páginas corretas
+            if hasattr(user, 'perfil'):
+                if user.perfil.tipo_usuario == 'gerenciador':
+                    return redirect('lista_competicoes')  
+                elif user.perfil.tipo_usuario == 'jogador':
+                    return redirect('pagina_jogador')  # Victor - Criei mas ainda precisa desenvolver
+        
         else:
             return render(request, "login.html", {"erro": "Usuário ou senha inválidos"})
     return render(request, "login.html")
@@ -56,7 +62,7 @@ from .models import Competicao
 @login_required # Victor -  Restringe o acesso para cria_competição só para usuário logado
 def criar_competicao(request):
     if request.user.perfil.tipo_usuario != 'gerenciador':
-        return HttpResponseForbidden("Apenas gerenciadores podem acessar essa página.")
+        return redirect('pagina_jogador') # Victor - Se o usuário for jogador, ele é redirecionado para página dele
 
 
     if request.method == "POST":
@@ -73,14 +79,19 @@ def criar_competicao(request):
             return redirect("lista_competicoes")
     return render(request,"criar_competicao.html")
 
-
+@login_required
 def lista_competicoes(request):
+    if request.user.perfil.tipo_usuario != 'gerenciador':
+        return redirect('pagina_jogador')
+
     competicoes = Competicao.objects.all()  
     return render(request, "lista_competicoes.html", {'competicoes': competicoes})
 
 @login_required
 def editar_competicao(request,id):
-
+    if request.user.perfil.tipo_usuario != 'gerenciador':
+        return redirect('pagina_jogador')
+    
     competicao = get_object_or_404(Competicao, id=id)
 
     if request.method == 'POST':
@@ -94,6 +105,10 @@ def editar_competicao(request,id):
 
 @login_required
 def excluir_competicao(request, id):
+
+    if request.user.perfil.tipo_usuario != 'gerenciador':
+        return redirect('pagina_jogador')
+
     competicao = get_object_or_404(Competicao, id=id)
     if request.method == 'POST':
         competicao.delete()
@@ -107,23 +122,56 @@ def adicionar_time(request, competicao_id):
     competicao = get_object_or_404(Competicao, id=competicao_id)
 
     if request.user.perfil.tipo_usuario != 'gerenciador':
-        return HttpResponseForbidden("Apenas gerenciadores podem adicionar times.")
+        return redirect('lista_competicoes')
 
     if competicao.times.count() >= competicao.numero_de_times:
-        return HttpResponseForbidden("Limite de times atingido para esta competição.")
+        return HttpResponse("Limite de times atingido.")
 
-    jogadores = User.objects.filter(perfil__tipo_usuario='jogador')
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        if nome:
+            Time.objects.create(nome=nome, competicao=competicao)
+            return redirect('editar_times', competicao_id=competicao.id)
 
-    if request.method == "POST":
-        nome_time = request.POST.get("nome_time")
-        jogadores_ids = request.POST.getlist("jogadores")
+    return render(request, 'adicionar_time_crud.html', {'competicao': competicao})
 
-        if nome_time and jogadores_ids:
-            time = Time.objects.create(nome=nome_time, competicao=competicao)
-            time.jogadores.set(jogadores_ids)
-            return redirect("lista_competicoes")
+@login_required
+def editar_times(request, competicao_id):
+    competicao = get_object_or_404(Competicao, id=competicao_id)
+    if request.user.perfil.tipo_usuario != 'gerenciador':
+        return redirect('pagina_jogador')
+    
+    times = Time.objects.filter(competicao=competicao)
+    return render(request, 'editar_times.html', {'competicao': competicao, 'times': times})
 
-    return render(request, "adicionar_time.html", {
-        "competicao": competicao,
-        "jogadores": jogadores
-    })
+@login_required
+def editar_time(request, time_id):
+    time = get_object_or_404(Time, id=time_id)
+    competicao = time.competicao
+
+    if request.user.perfil.tipo_usuario != 'gerenciador':
+        return redirect('lista_competicoes')
+
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        if nome:
+            time.nome = nome
+            time.save()
+            return redirect('editar_times', competicao_id=competicao.id)
+
+    return render(request, 'editar_time.html', {'time': time, 'competicao': competicao})
+
+@login_required
+def excluir_time(request, time_id):
+    time = get_object_or_404(Time, id=time_id)
+    competicao_id = time.competicao.id
+
+    if request.user.perfil.tipo_usuario != 'gerenciador':
+        return redirect('lista_competicoes')
+
+    time.delete()
+    return redirect('editar_times', competicao_id=competicao_id)
+
+@login_required
+def pagina_jogador(request):
+    return render(request, 'pagina_jogador.html')

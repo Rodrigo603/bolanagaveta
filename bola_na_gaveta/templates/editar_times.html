@@ -1,0 +1,37 @@
+{% load static %}
+<h1>Editar Times da Competição: {{ competicao.nome }}</h1>
+
+<a href="{% url 'editar_competicao' competicao.id %}">Voltar</a>
+<hr>
+
+<h2>Times Cadastrados</h2>
+
+{% if times %}
+  <ul>
+    {% for time in times %}
+      <li>
+        <form method="post" action="{% url 'editar_time' time.id %}" style="display:inline;">
+          {% csrf_token %}
+          <input type="text" name="nome" value="{{ time.nome }}">
+          <button type="submit">Salvar</button>
+        </form>
+
+        <form method="post" action="{% url 'excluir_time' time.id %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" onclick="return confirm('Tem certeza que deseja excluir este time?');">Excluir</button>
+        </form>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Não há times cadastrados ainda.</p>
+{% endif %}
+
+<hr>
+
+<h2>Adicionar novo time</h2>
+<form method="post" action="{% url 'adicionar_time' competicao.id %}">
+  {% csrf_token %}
+  <input type="text" name="nome" placeholder="Nome do time">
+  <button type="submit">Adicionar</button>
+</form>
