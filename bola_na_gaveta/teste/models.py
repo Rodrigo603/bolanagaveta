@@ -31,4 +31,14 @@ class Time(models.Model):
     def __str__(self):
         return self.nome
     
+class Partida(models.Model):
+    competicao = models.ForeignKey(Competicao, on_delete=models.CASCADE, related_name='partidas')
+    time_casa = models.ForeignKey(Time, on_delete=models.CASCADE, related_name='partidas_casa')
+    time_visitante = models.ForeignKey(Time, on_delete=models.CASCADE, related_name='partidas_visitante')
+    data = models.DateField()
+    hora = models.TimeField()
+    
+    def __str__(self):
+        return f"{self.time_casa.nome} vs {self.time_visitante.nome} - {self.data}"
+    
 # Create your models here.
