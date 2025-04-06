@@ -1,22 +1,53 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Cadastro{% endblock %}
+{% block title %}Cadastro - Bola na Gaveta{% endblock %}
 
 {% block content %}
-    <h1>Cadastro</h1>
+<div class="card" style="max-width: 500px; margin: 2rem auto;">
+    <h1 class="card-title"><i class="fas fa-user-plus"></i> Cadastro</h1>
+    
+    {% if erro %}
+    <div class="alert alert-danger">
+        {{ erro }}
+    </div>
+    {% endif %}
+    
     <form method="POST">
         {% csrf_token %}
-        <label for="tipo_usuario">Tipo de usuário:</label>
-        <select name="tipo_usuario" required>
-            <option value="gerenciador">Gerenciador</option>
-            <option value="jogador">Jogador</option>
-        </select><br><br>
-        <input type="text" name="username" placeholder="Usuário" required><br><br>
-        <input type="email" name="email" placeholder="E-mail" required><br><br>
-        <input type="password" name="password1" placeholder="Senha" required><br><br>
-        <input type="password" name="password2" placeholder="Confirme a senha" required><br><br>
-        <button type="submit">Cadastrar</button>
+        <div class="form-group">
+            <label for="tipo_usuario"><i class="fas fa-users-cog"></i> Tipo de usuário</label>
+            <select name="tipo_usuario" id="tipo_usuario" class="form-control" required>
+                <option value="gerenciador">Gerenciador</option>
+                <option value="jogador">Jogador</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="username"><i class="fas fa-user"></i> Nome de usuário</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Digite seu nome de usuário" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="email"><i class="fas fa-envelope"></i> E-mail</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="Digite seu e-mail" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password1"><i class="fas fa-lock"></i> Senha</label>
+            <input type="password" id="password1" name="password1" class="form-control" placeholder="Digite sua senha" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password2"><i class="fas fa-lock"></i> Confirme a senha</label>
+            <input type="password" id="password2" name="password2" class="form-control" placeholder="Confirme sua senha" required>
+        </div>
+        
+        <button type="submit" class="btn" style="width: 100%;">Cadastrar</button>
     </form>
-    <p>Já tem uma conta? <a href="{% url 'login' %}">Faça login</a></p>
+    
+    <p style="text-align: center; margin-top: 1.5rem;">
+        Já tem uma conta? <a href="{% url 'login' %}">Faça login</a>
+    </p>
+</div>
 {% endblock %}
