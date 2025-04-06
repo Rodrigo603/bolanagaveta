@@ -1,35 +1,39 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static "styles.css" %}">
-    <title>Lista de Competições</title>
-</head>
-<body>
-    <div class = alinhar>
 
-        <h1>Competições Cadastradas</h1>
-        <ul>
-            {% for competicao in competicoes %}
-            <div class = "ajeitar"><li>
-                {{ competicao.nome }} - {{ competicao.local }} ({{ competicao.numero_de_times }} times)
-                [<a href="{% url 'editar_competicao' competicao.id %}">Editar</a>]
-                
-                <form action="{% url 'excluir_competicao' competicao.id %}" method="post" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" onclick="return confirm('Tem certeza que deseja excluir {{ competicao.nome }}?')">
-                        Excluir
-                    </button>
-                </form>
-            </li>
-            {% empty %}
-            <div class = "ajeitar"r><li>Nenhuma competição cadastrada.</li></div>
-            {% endfor %}
-        </ul>
+{% block title %}Competições Cadastradas - Bola na Gaveta{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <h1><i class="fas fa-trophy"></i> Competições Cadastradas</h1>
+    <a href="{% url 'criar_competicao' %}" class="btn"><i class="fas fa-plus-circle"></i> Nova Competição</a>
+</section>
+
+{% if competicoes %}
+<div class="features">
+    {% for competicao in competicoes %}
+    <div class="card">
+        <h2 class="card-title"><i class="fas fa-futbol"></i> {{ competicao.nome }}</h2>
+        <div class="competition-details">
+            <p><i class="fas fa-map-marker-alt"></i> <strong>Local:</strong> {{ competicao.local }}</p>
+            <p><i class="fas fa-users"></i> <strong>Times:</strong> {{ competicao.numero_de_times }}</p>
+        </div>
+        <div class="card-actions">
+            <a href="{% url 'editar_competicao' competicao.id %}" class="btn"><i class="fas fa-edit"></i> Editar</a>
+            <form action="{% url 'excluir_competicao' competicao.id %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir {{ competicao.nome }}?')">
+                    <i class="fas fa-trash"></i> Excluir
+                </button>
+            </form>
+        </div>
     </div>
-        <a href="{% url 'criar_competicao' %}">Criar nova competição</a>
-    </div>
-</body>
-</html>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card">
+    <p class="empty-message"><i class="fas fa-info-circle"></i> Nenhuma competição cadastrada.</p>
+    <a href="{% url 'criar_competicao' %}" class="btn"><i class="fas fa-plus-circle"></i> Criar nova competição</a>
+</div>
+{% endif %}
+{% endblock %}
