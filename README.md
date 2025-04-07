@@ -35,13 +35,24 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
 ## 📎Links Importantes
 
 
-[Figma](https://www.figma.com/design/5ArQVPK11yIL3R4x4tkxAG/Bola-na-Gaveta?node-id=0-1&p=f&t=Tkn20FqmP4lzI3k0-0)
-[Jira](https://bolanagaveta.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog?atlOrigin=eyJpIjoiMjcwOTVjMjM0MDZmNDMwNzhhZjVlMWY2ZTg0MWFkNjAiLCJwIjoiaiJ9)
+<div align="center">
+  <a href="https://bolanagaveta.atlassian.net/jira/software/projects/SCRUM/summary">
+    <img src="https://img.shields.io/badge/Jira-0052CC?style=for-the-badge&logo=Jira&logoColor=white" alt="Jira">
+  </a>
+  <a href="https://www.figma.com/design/5ArQVPK11yIL3R4x4tkxAG/Bola-na-Gaveta?node-id=0-1&p=f&t=Qn5xgNrox2cDHicp-0">
+    <img src="https://img.shields.io/badge/Figma-4B0082?style=for-the-badge&logo=Figma&logoColor=white" alt="Figma">
+  </a>
+  <a href="https://bolanagaveta.azurewebsites.net/">
+    <img src="https://img.shields.io/badge/🏆%20BOLANAGAVETA-28a745?style=for-the-badge&logoColor=white" alt="Bolanagaveta">
+  </a>
+</div>
 
-## Entregas ✅
+
+
+## Entregas 
 
 <details>
-  <summary>Entrega 01</summary>
+  <summary>✅Entrega 01</summary>
 
   [Screencast](https://www.youtube.com/watch?v=089Hk_P6spY)
   
@@ -57,7 +68,7 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
 </details>
 
 <details>
-  <summary>Entrega 02</summary>
+  <summary>✅Entrega 02</summary>
 
    [Screencast]()
 
