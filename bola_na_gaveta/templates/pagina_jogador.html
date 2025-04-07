@@ -1,11 +1,51 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <title>Página do Jogador</title>
-</head>
-<body>
-  <h1>Página do Jogador</h1>
-</body>
-</html>
+
+{% block title %}Meus Jogos - Bola na Gaveta{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h1 class="card-title"><i class="fas fa-futbol"></i> Meus Jogos</h1>
+  
+  {% if user.time_set.all %}
+    <div class="card">
+      <h2>Meus Times</h2>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Competição</th>
+              <th>Local</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for time in user.time_set.all %}
+              <tr>
+                <td>{{ time.nome }}</td>
+                <td>{{ time.competicao.nome }}</td>
+                <td>{{ time.competicao.local }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      <p>Você ainda não está cadastrado em nenhum time. Entre em contato com um gerenciador para ser adicionado a um time.</p>
+    </div>
+  {% endif %}
+  
+  <div class="card">
+    <h2>Estatísticas do Jogador</h2>
+    <p>Em breve você poderá ver suas estatísticas aqui!</p>
+    <ul>
+      <li>Gols marcados</li>
+      <li>Assistências</li>
+      <li>Cartões</li>
+      <li>Partidas jogadas</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}

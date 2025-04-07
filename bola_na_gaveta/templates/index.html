@@ -1,16 +1,39 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="{% static "styles.css" %}">
-    <title>Bem-vindo</title>
-</head>
-<body>
-    </div class = alinhar>
-    <h1>Bem-vindo ao site!</h1>
-    <a href="{% url 'login' %}">Login</a> | 
-    <a href="{% url 'cadastro' %}">Cadastro</a>
+
+{% block title %}Bola na Gaveta - Gerenciamento de Campeonatos{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1>🏆 BOLA NA GAVETA</h1>
+        <p>Sistema de gerenciamento de campeonatos esportivos</p>
+        <div class="hero-buttons">
+            <a href="{% url 'login' %}" class="btn">Entrar</a>
+            <a href="{% url 'cadastro' %}" class="btn btn-secondary">Cadastrar</a>
+        </div>
     </div>
-</body>
-</html>
+</section>
+
+<section class="features">
+    <div class="card">
+        <h2 class="card-title"><i class="fas fa-users"></i> Para Jogadores</h2>
+        <ul>
+            <li>Visualize a tabela de classificação</li>
+            <li>Acompanhe suas estatísticas individuais</li>
+            <li>Consulte o ranking de artilheiros</li>
+            <li>Acesse dados detalhados sobre cada partida</li>
+        </ul>
+    </div>
+    
+    <div class="card">
+        <h2 class="card-title"><i class="fas fa-cogs"></i> Para Administradores</h2>
+        <ul>
+            <li>Cadastre times e jogadores</li>
+            <li>Crie e gerencie partidas</li>
+            <li>Atualize a tabela de classificação</li>
+            <li>Registre gols, cartões e estatísticas</li>
+        </ul>
+    </div>
+</section>
+{% endblock %}

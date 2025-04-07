@@ -1,37 +1,84 @@
+{% extends "base.html" %}
 {% load static %}
-<h1>Editar Times da Competição: {{ competicao.nome }}</h1>
 
-<a href="{% url 'editar_competicao' competicao.id %}">Voltar</a>
-<hr>
+{% block title %}Editar Times da Competição - Bola na Gaveta{% endblock %}
 
-<h1>Times Cadastrados</h1>
+{% block content %}
+<section class="page-header">
+    <h1><i class="fas fa-users"></i> Editar Times da Competição: {{ competicao.nome }}</h1>
+    <a href="{% url 'editar_competicao' competicao.id %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Voltar</a>
+</section>
 
-{% if times %}
-  <ul>
-    {% for time in times %}
-      <li>
-        <form method="post" action="{% url 'editar_time' time.id %}" style="display:inline;">
-          {% csrf_token %}
-          <input type="text" name="nome" value="{{ time.nome }}">
-          <button type="submit">Salvar</button>
-        </form>
+<div class="card">
+    <h2 class="card-title"><i class="fas fa-list"></i> Times Cadastrados</h2>
+    
+    {% if times %}
+    <div class="team-list">
+        {% for time in times %}
+        <div class="team-item">
+            <form method="post" action="{% url 'editar_time' time.id %}" class="team-edit-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" name="nome" value="{{ time.nome }}" class="form-control" required>
+                    <button type="submit" class="btn"><i class="fas fa-save"></i> Salvar</button>
+                </div>
+            </form>
 
-        <form method="post" action="{% url 'excluir_time' time.id %}" style="display:inline;">
-          {% csrf_token %}
-          <button type="submit" onclick="return confirm('Tem certeza que deseja excluir este time?');">Excluir</button>
-        </form>
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>Não há times cadastrados ainda.</p>
-{% endif %}
+            <form method="post" action="{% url 'excluir_time' time.id %}" class="team-delete-form">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir este time?');"><i class="fas fa-trash"></i> Excluir</button>
+            </form>
+            
+            <div class="team-players">
+                <h3><i class="fas fa-user"></i> Jogadores do Time</h3>
+                {% if time.jogadores.all %}
+                <ul class="player-list">
+                    {% for jogador in time.jogadores.all %}
+                    <li>
+                        {{ jogador.username }}
+                        <form method="post" action="{% url 'remover_jogador_time' time.id jogador.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-user-minus"></i></button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="empty-message">Nenhum jogador adicionado a este time.</p>
+                {% endif %}
+                
+                <form method="post" action="{% url 'adicionar_jogador_time' time.id %}" class="add-player-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <select name="jogador_id" class="form-control" required>
+                            <option value="">Selecione um jogador</option>
+                            {% for jogador in jogadores_disponiveis %}
+                            <option value="{{ jogador.id }}">{{ jogador.username }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-sm"><i class="fas fa-user-plus"></i> Adicionar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-message"><i class="fas fa-info-circle"></i> Não há times cadastrados ainda.</p>
+    {% endif %}
+</div>
 
-<hr>
-
-<h2>Adicionar novo time</h2>
-<form method="post" action="{% url 'adicionar_time' competicao.id %}">
-  {% csrf_token %}
-  <input type="text" name="nome" placeholder="Nome do time">
-  <button type="submit">Adicionar</button>
-</form>
+<div class="card">
+    <h2 class="card-title"><i class="fas fa-plus-circle"></i> Adicionar Novo Time</h2>
+    <form method="post" action="{% url 'adicionar_time' competicao.id %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="nome">Nome do Time:</label>
+            <input type="text" id="nome" name="nome" placeholder="Nome do time" class="form-control" required>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn"><i class="fas fa-plus"></i> Adicionar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
