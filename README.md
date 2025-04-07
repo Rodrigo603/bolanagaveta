@@ -74,6 +74,7 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
    
    [Deploy](https://bolanagaveta.azurewebsites.net/)
    
+   Bugtracker
    ![Bugtracker](images/bugtracker.png)
 
    Backlog jira
