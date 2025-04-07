@@ -56,3 +56,9 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
   ![Quadro jira](images/QuadroJira.png)
 </details>
 
+<details>
+  <summary>Entrega 02</summary>
+
+   [Screencast]
+  
+</details>
