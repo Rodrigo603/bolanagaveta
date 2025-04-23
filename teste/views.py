@@ -5,7 +5,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 
 
-
 def login_view(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -336,3 +335,29 @@ def excluir_partida(request, partida_id):
         partida.delete()
     
     return redirect('gerenciar_partidas', competicao_id=competicao_id)
+
+
+#Partidas Jogador
+from datetime import date
+from django.utils.timezone import now
+from django.db.models import Q
+from django.utils import timezone
+
+
+@login_required
+def pagina_jogador(request):
+    if request.user.perfil.tipo_usuario != 'jogador':
+        return redirect('lista_competicoes')
+
+    times = Time.objects.filter(jogadores=request.user)
+
+    # Buscar partidas futuras envolvendo os times do jogador
+    partidas = Partida.objects.filter(
+        Q(time_casa__in=times) | Q(time_visitante__in=times),
+        data__gte=timezone.now().date()
+    ).order_by('data', 'hora')
+
+    return render(request, 'pagina_jogador.html', {
+        'times': times,
+        'partidas': partidas
+    })

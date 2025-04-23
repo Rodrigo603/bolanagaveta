@@ -48,4 +48,37 @@
     </ul>
   </div>
 </div>
+<div class="card">
+  <h2>Próximos Jogos</h2>
+
+  {% if partidas %}
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Time da Casa</th>
+            <th>Time Visitante</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for partida in partidas %}
+            <tr>
+              <td>{{ partida.data|date:"d/m/Y" }}</td>
+              <td>{{ partida.hora|time:"H:i" }}</td>
+              <td>{{ partida.time_casa.nome }}</td>
+              <td>{{ partida.time_visitante.nome }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-warning">
+      Nenhuma partida futura encontrada.
+    </div>
+  {% endif %}
+</div>
+
 {% endblock %}
