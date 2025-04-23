@@ -73,6 +73,18 @@
                     {% csrf_token %}
                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir esta partida?');"><i class="fas fa-trash"></i> Excluir</button>
                 </form>
+                <form method="post" action="{% url 'alternar_finalizacao_partida' partida.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    {% if partida.finalizada %}
+                        <button type="submit" class="btn btn-sm btn-warning">
+                            <i class="fas fa-times-circle"></i> Marcar como Não Finalizada
+                        </button>
+                    {% else %}
+                        <button type="submit" class="btn btn-sm btn-success">
+                            <i class="fas fa-check-circle"></i> Marcar como Finalizada
+                        </button>
+                    {% endif %}
+                </form>
             </div>
         </div>
         {% endfor %}

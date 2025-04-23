@@ -336,8 +336,18 @@ def excluir_partida(request, partida_id):
     
     return redirect('gerenciar_partidas', competicao_id=competicao_id)
 
+@login_required
+def alternar_finalizacao_partida(request, partida_id):
+    partida = get_object_or_404(Partida, id=partida_id)
 
-#Partidas Jogador
+    if request.method == 'POST':
+        partida.finalizada = not partida.finalizada
+        partida.save()
+
+    return redirect('gerenciar_partidas', competicao_id=partida.competicao.id)
+
+
+#Victor - Partidas Jogador
 from datetime import date
 from django.utils.timezone import now
 from django.db.models import Q
@@ -351,13 +361,55 @@ def pagina_jogador(request):
 
     times = Time.objects.filter(jogadores=request.user)
 
-    # Buscar partidas futuras envolvendo os times do jogador
     partidas = Partida.objects.filter(
         Q(time_casa__in=times) | Q(time_visitante__in=times),
-        data__gte=timezone.now().date()
+        data__gte=timezone.now().date(),
+        finalizada=False  # só partidas ainda não finalizadas
     ).order_by('data', 'hora')
 
     return render(request, 'pagina_jogador.html', {
         'times': times,
         'partidas': partidas
     })
+
+@login_required
+def historico_partidas_competicao(request, competicao_id):
+    if request.user.perfil.tipo_usuario != 'jogador':
+        return redirect('lista_competicoes')
+
+    competicao = get_object_or_404(Competicao, id=competicao_id)
+    times_jogador = Time.objects.filter(competicao=competicao, jogadores=request.user)
+
+    partidas = Partida.objects.filter(
+        competicao=competicao,
+        finalizada=True
+    ).filter(
+        Q(time_casa__in=times_jogador) | Q(time_visitante__in=times_jogador)
+    ).order_by('-data', '-hora')
+
+    return render(request, 'historico_partidas.html', {
+        'competicao': competicao,
+        'partidas': partidas,
+    })
+
+#Victor - Estatísticas 
+
+def editar_estatisticas_partida(request, partida_id):
+    partida = get_object_or_404(Partida, id=partida_id)
+
+    if request.method == "POST":
+        # salvar gols, cartões e atualizar o resultado
+        # isso pode incluir criar Gol() e Cartao() a partir dos dados do formulário
+        partida.finalizada = True
+        partida.save()
+        return redirect('detalhes_partida', partida.id)
+
+    jogadores_time_casa = User.objects.filter(time__id=partida.time_casa.id)
+    jogadores_time_visitante = User.objects.filter(time__id=partida.time_visitante.id)
+
+    return render(request, 'editar_estatisticas.html', {
+        'partida': partida,
+        'jogadores_time_casa': jogadores_time_casa,
+        'jogadores_time_visitante': jogadores_time_visitante,
+    })
+

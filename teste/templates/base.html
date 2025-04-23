@@ -21,7 +21,7 @@
                         <li><a href="{% url 'lista_competicoes' %}">Competições</a></li>
                         <li><a href="{% url 'criar_competicao' %}">Nova Competição</a></li>
                     {% elif user.perfil.tipo_usuario == 'jogador' %}
-                        <li><a href="{% url 'pagina_jogador' %}">Meus Jogos</a></li>
+                        <li><a href="{% url 'pagina_jogador' %}">Home</a></li>
                     {% endif %}
                     <li><a href="{% url 'logout' %}">Sair</a></li>
                 {% else %}

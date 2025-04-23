@@ -37,8 +37,27 @@ class Partida(models.Model):
     time_visitante = models.ForeignKey(Time, on_delete=models.CASCADE, related_name='partidas_visitante')
     data = models.DateField()
     hora = models.TimeField()
+    gols_time_casa = models.PositiveIntegerField(default=0)
+    gols_time_visitante = models.PositiveIntegerField(default=0)
+    finalizada = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.time_casa.nome} vs {self.time_visitante.nome} - {self.data}"
     
-# Create your models here.
+#Estatísticas 
+
+class Gol(models.Model):
+    jogador = models.ForeignKey(User, on_delete=models.CASCADE)
+    partida = models.ForeignKey('Partida', on_delete=models.CASCADE)
+   
+    assistencia = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assistencias')
+
+class Cartao(models.Model):
+    CARTAO_TIPO = [
+        ('amarelo', 'Amarelo'),
+        ('vermelho', 'Vermelho'),
+    ]
+    jogador = models.ForeignKey(User, on_delete=models.CASCADE)
+    partida = models.ForeignKey('Partida', on_delete=models.CASCADE)
+    tipo = models.CharField(max_length=10, choices=CARTAO_TIPO)
+    

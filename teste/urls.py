@@ -3,7 +3,8 @@ from .views import (index_view, login_view, cadastro_view, logout_view, criar_co
                    lista_competicoes, editar_competicao, excluir_competicao, editar_times, 
                    pagina_jogador, adicionar_time, editar_time, excluir_time, 
                    adicionar_jogador_time, remover_jogador_time, 
-                   gerenciar_partidas, adicionar_partida, editar_partida, excluir_partida)  # Importa todas as views
+                   gerenciar_partidas, adicionar_partida, editar_partida, excluir_partida, 
+                   alternar_finalizacao_partida, historico_partidas_competicao)  # Importa todas as views
 
 urlpatterns = [
     path("", index_view, name="index"),  # Página inicial
@@ -24,10 +25,12 @@ urlpatterns = [
     path('time/<int:time_id>/remover-jogador/<int:jogador_id>/', remover_jogador_time, name='remover_jogador_time'),
 
     path('pagina_jogador/',pagina_jogador, name='pagina_jogador'),
+    path('historico/competicao/<int:competicao_id>/', historico_partidas_competicao, name='historico_partidas_competicao'),
     
     # URLs para gerenciar partidas
     path('competicao/<int:competicao_id>/partidas/', gerenciar_partidas, name='gerenciar_partidas'),
     path('competicao/<int:competicao_id>/partidas/adicionar/', adicionar_partida, name='adicionar_partida'),
     path('partida/<int:partida_id>/editar/', editar_partida, name='editar_partida'),
     path('partida/<int:partida_id>/excluir/', excluir_partida, name='excluir_partida'),
+    path('partida/<int:partida_id>/alternar_finalizacao/', alternar_finalizacao_partida, name='alternar_finalizacao_partida'),
 ]
