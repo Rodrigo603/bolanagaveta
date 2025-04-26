@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Ranking - {{ competicao.nome }}{% endblock %}
+{% block content %}
+<h2><i class="fas fa-chart-bar"></i> Ranking - {{ competicao.nome }}</h2>
+
+<form method="get" class="mb-3">
+  <label for="filtro" class="me-2"><strong>Ordenar por:</strong></label>
+  <select name="filtro" id="filtro" class="form-select w-auto d-inline" onchange="this.form.submit()">
+    <option value="gols" {% if filtro == 'gols' %}selected{% endif %}>Gols</option>
+    <option value="assistencias" {% if filtro == 'assistencias' %}selected{% endif %}>Assistências</option>
+    <option value="amarelos" {% if filtro == 'amarelos' %}selected{% endif %}>Cartões Amarelos</option>
+    <option value="vermelhos" {% if filtro == 'vermelhos' %}selected{% endif %}>Cartões Vermelhos</option>
+  </select>
+</form>
+
+<table class="table table-bordered table-sm">
+  <thead>
+    <tr>
+      <th>Jogador</th>
+      <th>Gols</th>
+      <th>Assistências</th>
+      <th>🟨 Amarelos</th>
+      <th>🟥 Vermelhos</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for linha in ranking %}
+    <tr>
+      <td>{{ linha.jogador.username }}</td>
+      <td>{{ linha.gols }}</td>
+      <td>{{ linha.assistencias }}</td>
+      <td>{{ linha.amarelos }}</td>
+      <td>{{ linha.vermelhos }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'competicao_jogador_detalhes' competicao.id %}" class="btn btn-secondary mt-4">
+  <i class="fas fa-arrow-left"></i> Voltar
+</a>
+{% endblock %}

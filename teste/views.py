@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.contrib import messages
 
 
 def login_view(request):
@@ -76,7 +77,8 @@ def criar_competicao(request):
             Competicao.objects.create(
                 nome=nome,
                 numero_de_times = int(numero_de_times),
-                local=local
+                local=local,
+                gerente=request.user
             )
             return redirect("lista_competicoes")
     return render(request,"criar_competicao.html")
@@ -86,15 +88,18 @@ def lista_competicoes(request):
     if request.user.perfil.tipo_usuario != 'gerenciador':
         return redirect('pagina_jogador')
 
-    competicoes = Competicao.objects.all()  
+    competicoes = Competicao.objects.filter(gerente=request.user)
     return render(request, "lista_competicoes.html", {'competicoes': competicoes})
 
 @login_required
-def editar_competicao(request,id):
+def editar_competicao(request, id):
     if request.user.perfil.tipo_usuario != 'gerenciador':
         return redirect('pagina_jogador')
     
     competicao = get_object_or_404(Competicao, id=id)
+
+    if competicao.gerente != request.user:
+        return redirect('lista_competicoes')
 
     if request.method == 'POST':
         competicao.nome = request.POST.get('nome')
@@ -103,7 +108,12 @@ def editar_competicao(request,id):
         competicao.save()
         return redirect('lista_competicoes')
 
-    return render(request, 'editar_competicao.html', {'competicao': competicao})
+    classificacao = calcular_classificacao(competicao)
+
+    return render(request, 'editar_competicao.html', {
+        'competicao': competicao,
+        'classificacao': classificacao,
+    })
 
 @login_required
 def excluir_competicao(request, id):
@@ -112,6 +122,10 @@ def excluir_competicao(request, id):
         return redirect('pagina_jogador')
 
     competicao = get_object_or_404(Competicao, id=id)
+
+    if competicao.gerente != request.user:
+        return redirect('lista_competicoes')
+
     if request.method == 'POST':
         competicao.delete()
     return redirect('lista_competicoes')
@@ -182,22 +196,62 @@ def excluir_time(request, time_id):
     time.delete()
     return redirect('editar_times', competicao_id=competicao_id)
 
+from .models import Convite
+
 @login_required
-def adicionar_jogador_time(request, time_id):
+def convidar_jogador(request, time_id):
     time = get_object_or_404(Time, id=time_id)
-    
+
     if request.user.perfil.tipo_usuario != 'gerenciador':
         return redirect('lista_competicoes')
-    
+
     if request.method == 'POST':
         jogador_id = request.POST.get('jogador_id')
         if jogador_id:
             jogador = get_object_or_404(User, id=jogador_id)
+            
             # Verificar se o usuário tem perfil de jogador
             if hasattr(jogador, 'perfil') and jogador.perfil.tipo_usuario == 'jogador':
-                time.jogadores.add(jogador)
                 
+                # Verificar se já existe convite pendente
+                convite_existente = Convite.objects.filter(jogador=jogador, time=time, aceito=None).exists()
+                if not convite_existente:
+                    Convite.objects.create(jogador=jogador, time=time, enviado_por=request.user)
+                    messages.success(request, f"Convite enviado para {jogador.username} com sucesso!")
+                else:
+                    messages.warning(request, f"Já existe um convite pendente para {jogador.username}.")
+
     return redirect('editar_times', competicao_id=time.competicao.id)
+
+@login_required
+def convites_jogador(request):
+    convites = Convite.objects.filter(jogador=request.user, aceito=None)
+    return render(request, 'convites_jogador.html', {'convites': convites})
+
+@login_required
+def aceitar_convite(request, convite_id):
+    convite = get_object_or_404(Convite, id=convite_id, jogador=request.user)
+
+    if request.method == 'POST':
+        convite.aceito = True
+        convite.save()
+        # Mensagem de sucesso (já vem como "success" certinho)
+        messages.success(request, f'Você aceitou o convite para o time {convite.time.nome}!')
+
+    return redirect('convites_jogador')
+
+@login_required
+def recusar_convite(request, convite_id):
+    convite = get_object_or_404(Convite, id=convite_id, jogador=request.user)
+
+    if request.method == 'POST':
+        convite.aceito = False
+        convite.save()
+        # FORÇAR a tag para ser "danger" (em vez de "error")
+        messages.add_message(request, messages.SUCCESS, f'Você recusou o convite para o time {convite.time.nome}.', extra_tags='danger')
+
+    return redirect('convites_jogador')
+
 
 @login_required
 def remover_jogador_time(request, time_id, jogador_id):
@@ -393,23 +447,228 @@ def historico_partidas_competicao(request, competicao_id):
     })
 
 #Victor - Estatísticas 
+from .models import Partida, Gol, Assistencia, Cartao
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from .models import Partida, Gol, Assistencia, Cartao
+
+@login_required
 def editar_estatisticas_partida(request, partida_id):
     partida = get_object_or_404(Partida, id=partida_id)
 
+    if request.user.perfil.tipo_usuario != 'gerenciador':
+        return redirect('pagina_jogador')
+
+    jogadores_time_casa = partida.time_casa.jogadores.all()
+    jogadores_time_visitante = partida.time_visitante.jogadores.all()
+
     if request.method == "POST":
-        # salvar gols, cartões e atualizar o resultado
-        # isso pode incluir criar Gol() e Cartao() a partir dos dados do formulário
+        # Atualiza placar da partida
+        partida.gols_time_casa = int(request.POST.get("gols_time_casa", 0))
+        partida.gols_time_visitante = int(request.POST.get("gols_time_visitante", 0))
         partida.finalizada = True
         partida.save()
-        return redirect('detalhes_partida', partida.id)
 
-    jogadores_time_casa = User.objects.filter(time__id=partida.time_casa.id)
-    jogadores_time_visitante = User.objects.filter(time__id=partida.time_visitante.id)
+        # Apaga estatísticas anteriores (caso esteja editando)
+        Gol.objects.filter(partida=partida).delete()
+        Assistencia.objects.filter(partida=partida).delete()
+        Cartao.objects.filter(partida=partida).delete()
 
-    return render(request, 'editar_estatisticas.html', {
+        # Processa jogadores dos dois times
+        todos_jogadores = list(jogadores_time_casa) + list(jogadores_time_visitante)
+
+        for jogador in todos_jogadores:
+            gols = int(request.POST.get(f"gols_{jogador.id}", 0))
+            assistencias = int(request.POST.get(f"assistencias_{jogador.id}", 0))
+            amarelos = int(request.POST.get(f"amarelos_{jogador.id}", 0))
+            vermelhos = int(request.POST.get(f"vermelhos_{jogador.id}", 0))
+
+            for _ in range(gols):
+                Gol.objects.create(jogador=jogador, partida=partida)
+
+            for _ in range(assistencias):
+                Assistencia.objects.create(jogador=jogador, partida=partida)
+
+            for _ in range(amarelos):
+                Cartao.objects.create(jogador=jogador, partida=partida, tipo='amarelo')
+
+            for _ in range(vermelhos):
+                Cartao.objects.create(jogador=jogador, partida=partida, tipo='vermelho')
+
+        return redirect('gerenciar_partidas', competicao_id=partida.competicao.id)
+
+    return render(request, 'editar_estatisticas_partida.html', {
         'partida': partida,
         'jogadores_time_casa': jogadores_time_casa,
         'jogadores_time_visitante': jogadores_time_visitante,
+    })
+
+from django.db.models import Count, Q
+
+
+@login_required
+def ranking_jogadores(request, competicao_id):
+    competicao = get_object_or_404(Competicao, id=competicao_id)
+    jogadores = User.objects.filter(time__competicao=competicao).distinct()
+
+    # Coleta os dados
+    gols = Gol.objects.filter(partida__competicao=competicao).values('jogador').annotate(total=Count('id'))
+    assistencias = Assistencia.objects.filter(partida__competicao=competicao).values('jogador').annotate(total=Count('id'))
+    amarelos = Cartao.objects.filter(partida__competicao=competicao, tipo='amarelo').values('jogador').annotate(total=Count('id'))
+    vermelhos = Cartao.objects.filter(partida__competicao=competicao, tipo='vermelho').values('jogador').annotate(total=Count('id'))
+
+    mapa_gols = {x['jogador']: x['total'] for x in gols}
+    mapa_assistencias = {x['jogador']: x['total'] for x in assistencias}
+    mapa_amarelos = {x['jogador']: x['total'] for x in amarelos}
+    mapa_vermelhos = {x['jogador']: x['total'] for x in vermelhos}
+
+    ranking = []
+    for jogador in jogadores:
+        ranking.append({
+            'jogador': jogador,
+            'gols': mapa_gols.get(jogador.id, 0),
+            'assistencias': mapa_assistencias.get(jogador.id, 0),
+            'amarelos': mapa_amarelos.get(jogador.id, 0),
+            'vermelhos': mapa_vermelhos.get(jogador.id, 0),
+        })
+
+    # Filtro
+    filtro = request.GET.get("filtro", "gols")
+
+    if filtro == "assistencias":
+        ranking = sorted(ranking, key=lambda x: -x['assistencias'])
+    elif filtro == "amarelos":
+        ranking = sorted(ranking, key=lambda x: -x['amarelos'])
+    elif filtro == "vermelhos":
+        ranking = sorted(ranking, key=lambda x: -x['vermelhos'])
+    else:
+        ranking = sorted(ranking, key=lambda x: -x['gols'])
+
+    return render(request, 'ranking_jogadores.html', {
+        'competicao': competicao,
+        'ranking': ranking,
+        'filtro': filtro
+    })
+
+
+#Tabela de Classificação
+
+from collections import defaultdict
+from .models import Partida, Time
+
+
+def calcular_classificacao(competicao):
+    tabela = defaultdict(lambda: {
+        'time': None,
+        'jogos': 0,
+        'vitorias': 0,
+        'empates': 0,
+        'derrotas': 0,
+        'gols_marcados': 0,
+        'gols_sofridos': 0,
+        'saldo': 0,
+        'pontos': 0
+    })
+
+    partidas = Partida.objects.filter(competicao=competicao, finalizada=True)
+
+    for partida in partidas:
+        casa = partida.time_casa
+        visitante = partida.time_visitante
+        gols_casa = partida.gols_time_casa
+        gols_visitante = partida.gols_time_visitante
+
+        for time, gm, gs in [(casa, gols_casa, gols_visitante), (visitante, gols_visitante, gols_casa)]:
+            dados = tabela[time]
+            dados['time'] = time
+            dados['jogos'] += 1
+            dados['gols_marcados'] += gm
+            dados['gols_sofridos'] += gs
+            dados['saldo'] = dados['gols_marcados'] - dados['gols_sofridos']
+
+        if gols_casa > gols_visitante:
+            tabela[casa]['vitorias'] += 1
+            tabela[casa]['pontos'] += 3
+            tabela[visitante]['derrotas'] += 1
+        elif gols_casa < gols_visitante:
+            tabela[visitante]['vitorias'] += 1
+            tabela[visitante]['pontos'] += 3
+            tabela[casa]['derrotas'] += 1
+        else:
+            tabela[casa]['empates'] += 1
+            tabela[visitante]['empates'] += 1
+            tabela[casa]['pontos'] += 1
+            tabela[visitante]['pontos'] += 1
+
+    return sorted(tabela.values(), key=lambda x: (-x['pontos'], -x['saldo'], -x['gols_marcados']))
+
+@login_required
+def tabela_classificacao(request, competicao_id):
+    competicao = get_object_or_404(Competicao, id=competicao_id)
+    classificacao = calcular_classificacao(competicao)
+
+    return render(request, 'tabela_classificacao.html', {
+        'competicao': competicao,
+        'classificacao': classificacao,
+    })
+
+@login_required
+def tabela_classificacao_jogador(request):
+    if request.user.perfil.tipo_usuario != 'jogador':
+        return redirect('lista_competicoes')
+
+    times = request.user.time_set.all()
+    competicoes = set(time.competicao for time in times)
+
+    tabelas = []
+    for competicao in competicoes:
+        classificacao = calcular_classificacao(competicao)
+        tabelas.append({
+            'competicao': competicao,
+            'classificacao': classificacao
+        })
+
+    return render(request, 'tabela_classificacao_jogador.html', {
+        'tabelas': tabelas
+    })
+
+@login_required
+def competicao_jogador_detalhes(request, competicao_id):
+    if request.user.perfil.tipo_usuario != 'jogador':
+        return redirect('lista_competicoes')
+
+    competicao = get_object_or_404(Competicao, id=competicao_id)
+
+    # Checar se o jogador realmente faz parte da competição
+    if not Time.objects.filter(competicao=competicao, jogadores=request.user).exists():
+        return redirect('pagina_jogador')
+
+    classificacao = calcular_classificacao(competicao)
+    partidas = Partida.objects.filter(competicao=competicao, finalizada=True).order_by('-data', '-hora')
+
+    return render(request, 'competicao_jogador_detalhes.html', {
+        'competicao': competicao,
+        'classificacao': classificacao,
+        'partidas': partidas,
+    })
+
+@login_required
+def historico_partidas_competicao(request, competicao_id):
+    competicao = get_object_or_404(Competicao, id=competicao_id)
+
+    if request.user.perfil.tipo_usuario != 'jogador':
+        return redirect('pagina_jogador')
+
+    # Verifica se o jogador participa da competição
+    if not Time.objects.filter(competicao=competicao, jogadores=request.user).exists():
+        return redirect('pagina_jogador')
+
+    partidas = Partida.objects.filter(competicao=competicao, finalizada=True).order_by('-data', '-hora')
+
+    return render(request, 'historico_partidas_competicao.html', {
+        'competicao': competicao,
+        'partidas': partidas
     })
 

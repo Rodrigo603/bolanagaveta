@@ -4,8 +4,15 @@
 {% block title %}Home - Bola na Gaveta{% endblock %}
 
 {% block content %}
-<div class="card">
-  <h1 class="card-title"><i class="fas fa-futbol"></i> Home</h1>
+  <div class="card mb-4">
+    <div class="card-body text-center">
+      <h2 class="card-title">Convites</h2>
+      <p>Veja os convites que você recebeu para participar de times.</p>
+      <a href="{% url 'convites_jogador' %}" class="btn btn-success btn-lg">
+        <i class="fas fa-envelope"></i> Ver Meus Convites
+      </a>
+    </div>
+  </div>
   
   {% if user.time_set.all %}
     <div class="card">
@@ -17,7 +24,7 @@
               <th>Time</th>
               <th>Competição</th>
               <th>Local</th>
-              <th>Histórico</th>
+              <th>    </th>
             </tr>
           </thead>
           <tbody>
@@ -27,8 +34,8 @@
                 <td>{{ time.competicao.nome }}</td>
                 <td>{{ time.competicao.local }}</td>
                 <td>
-                  <a href="{% url 'historico_partidas_competicao' time.competicao.id %}" class="btn btn-sm btn-outline-info">
-                    <i class="fas fa-history"></i> Ver Histórico
+                  <a href="{% url 'competicao_jogador_detalhes' time.competicao.id %}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-eye"></i> Acessar Competição
                   </a>
                 </td>
               </tr>
@@ -55,7 +62,7 @@
   </div>
 </div>
 <div class="card">
-  <h2>Próximos Jogos</h2>
+  <h2>Meus Próximos Jogos</h2>
 
   {% if partidas %}
     <div class="table-responsive">
