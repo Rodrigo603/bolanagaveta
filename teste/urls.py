@@ -1,14 +1,14 @@
 from django.urls import path
-from .views import (index_view, login_view, cadastro_view, logout_view, criar_competicao, 
-                   lista_competicoes, editar_competicao, excluir_competicao, editar_times, 
-                   pagina_jogador, adicionar_time, editar_time, excluir_time, 
-                   convidar_jogador, convites_jogador,aceitar_convite, recusar_convite, remover_jogador_time, 
-                   gerenciar_partidas, adicionar_partida, editar_partida, excluir_partida, 
-                   alternar_finalizacao_partida, historico_partidas_competicao, editar_estatisticas_partida, tabela_classificacao,
-                   tabela_classificacao_jogador, competicao_jogador_detalhes, historico_partidas_competicao, ranking_jogadores)  # Importa todas as views
+from .views import index_view, login_view, cadastro_view, logout_view, criar_competicao 
+from .views import lista_competicoes, editar_competicao, excluir_competicao, editar_times 
+from .views import pagina_jogador, adicionar_time, editar_time, excluir_time
+from .views import convidar_jogador, convites_jogador,aceitar_convite, recusar_convite, remover_jogador_time 
+from .views import gerenciar_partidas, adicionar_partida, editar_partida, excluir_partida
+from .views import alternar_finalizacao_partida, historico_partidas_competicao, editar_estatisticas_partida, tabela_classificacao
+from .views import tabela_classificacao_jogador, competicao_jogador_detalhes, historico_partidas_competicao, ranking_jogadores
 
 urlpatterns = [
-    path("", index_view, name="index"),  # Página inicial
+    path("", index_view, name="index"), 
     path("login/", login_view, name="login"),
     path("cadastro/", cadastro_view, name="cadastro"),
     path("logout/", logout_view, name="logout"),

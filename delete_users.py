@@ -8,5 +8,6 @@ django.setup()
 from django.contrib.auth.models import User
 
 
-User.objects.all().delete()
-print("Todos os usuários foram deletados.")
+User.objects.exclude(is_superuser=True).delete()
+
+print("Todos os usuários comuns deletados.")

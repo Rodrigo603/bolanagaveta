@@ -36,10 +36,16 @@ Cypress.Commands.add('signinJogador', () => {
     cy.get('.btn').click();
 });
 
-Cypress.Commands.add('login', () => {
+Cypress.Commands.add('loginGerenciador', () => {
     cy.get('#username').type('teste gerenciador');
     cy.get('#password').type('12345');
     cy.get('.btn').click();
+});
+
+Cypress.Commands.add('loginJogador', () => {
+  cy.get('#username').type('teste jogador');
+  cy.get('#password').type('12345');
+  cy.get('.btn').click();
 });
 
 describe('gerenciador flow', () => {
@@ -50,6 +56,18 @@ describe('gerenciador flow', () => {
   
     it('deve criar um usuario e fazer login no site', () => {
       cy.signinGerenciador();
-      cy.login();
+      cy.loginGerenciador();
     });
   });
+//
+  //describe('jogador flow', () => {
+//
+  //  before(() => {
+  //    cy.deleteUsers(); 
+  //  });
+  //
+  //  it('deve criar um usuario e fazer login no site', () => {
+  //    cy.signinJogador();
+  //    cy.loginJogador();
+  //  });
+  //});
