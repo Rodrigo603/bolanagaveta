@@ -1,11 +1,11 @@
 Cypress.Commands.add('deleteUsers', () => {
-    cy.exec('python delete_users.py', { failOnNonZeroExit: false }).then((result) => {
-      console.log(result.stdout); 
-      if (result.stderr) {
-        console.error(result.stderr);
-      }
-    });
+  return cy.exec('python delete_users.py', { failOnNonZeroExit: false }).then((result) => {
+    console.log(result.stdout); 
+    if (result.stderr) {
+      console.error(result.stderr);
+    }
   });
+});
 
 
 Cypress.Commands.add('signinGerenciador', () => {

@@ -1,14 +1,11 @@
 Cypress.Commands.add('deleteUsers', () => {
     return cy.exec('python delete_users.py', { failOnNonZeroExit: false }).then((result) => {
-        console.log(result.stdout); 
-        if (result.stderr) {
-            console.error(result.stderr);
-        } else {
-            console.log('Usuários excluídos com sucesso');
-        }
+      console.log(result.stdout);
+      if (result.stderr) {
+        console.error(result.stderr);
+      }
     });
-});
-
+  });
 
 
 Cypress.Commands.add('deleteCompeticoes', () => {
@@ -21,7 +18,17 @@ Cypress.Commands.add('deleteCompeticoes', () => {
 });
 
 
-  Cypress.Commands.add('signinGerenciador', () => {
+Cypress.Commands.add('deleteTimes', () => {
+    return cy.exec('python delete_times.py', { failOnNonZeroExit: false }).then((result) => {
+      console.log(result.stdout);
+      if (result.stderr) {
+        console.error(result.stderr);
+      }
+    });
+});
+
+
+Cypress.Commands.add('signinGerenciador', () => {
     cy.visit('/');
     cy.get('.nav-links > :nth-child(1) > a').click();
     cy.get('#tipo_usuario');
@@ -50,75 +57,43 @@ Cypress.Commands.add('criarCompeticao', () => {
 });
 
 
-Cypress.Commands.add('criarCompeticaoIncompleta', () => {
-    cy.get('.card > .btn').click();
-    cy.get('#numero_de_times').type('4');
-    cy.get('#local').type('Recife');
-    cy.get('button.btn').click();
-});
-
-
-Cypress.Commands.add('excluirCompeticao', () => {
-    cy.wait(1000);
-    cy.get('form > .btn').click();
-});
-
-Cypress.Commands.add('editarCompeticao', () => {
+Cypress.Commands.add('criarTime', () => {
     cy.get('.card-actions > a.btn').click();
-    cy.get('#nome').clear();
-    cy.get('#nome').type('Edição Cypress');
-    cy.get('#numero_de_times').clear();
-    cy.get('#numero_de_times').type('6');
-    cy.get('#local').clear();
-    cy.get('#local').type('Olinda');
-    cy.get('button.btn').click();
-
+    cy.get('[href="/competicao/36/editar_times/"]').click();
+    cy.get('#nome').type('time Cypress');
+    cy.get('.form-actions > .btn').click();
+    cy.wait(1000);
 });
 
-describe('CRUD da competicao', () => {
+
+describe('CRUD de times', () => {
+    
+      
 
     beforeEach(() => {
         cy.deleteUsers()
           .then(() => cy.deleteCompeticoes())
+          .then(() => cy.deleteTimes())
           .then(() => {
               cy.clearCookies();
               cy.clearLocalStorage();
               cy.visit('/');
+          });
     });
-});
+
     
-    
-    it('Cenario 1: Criar a competição e visualizá-la com sucesso.', () => {
+    it('Cenario 1: Criar o time e visualizá-lo com sucesso.', () => {
         cy.signinGerenciador();
         cy.loginGerenciador();
         cy.criarCompeticao();
-        cy.wait(1000);
+        cy.criarTime();
     });
-    
 
-    it('Cenario 2: Excluir a competição.', () => {
+
+    it('Cenario 2: : Cadastro de time já existente', () => {
         cy.signinGerenciador();
         cy.loginGerenciador();
         cy.criarCompeticao();
-        cy.excluirCompeticao();
-        cy.wait(1000);
-
+        cy.criarTime();
     });
-
-
-    it('Cenario 3: Editar a competição', () => {
-        cy.signinGerenciador();
-        cy.loginGerenciador();
-        cy.criarCompeticao();
-        cy.editarCompeticao();
-    });
-
-
-    it('cenario 4: Tentar cadastrar sem colocar todas as informações' , () => {
-        cy.signinGerenciador();
-        cy.loginGerenciador();
-        cy.criarCompeticaoIncompleta();
-        cy.wait(1000);
-    });
-
 });
