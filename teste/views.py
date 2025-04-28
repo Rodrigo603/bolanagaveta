@@ -140,14 +140,31 @@ def adicionar_time(request, competicao_id):
     if request.user.perfil.tipo_usuario != 'gerenciador':
         return redirect('lista_competicoes')
 
+    # limite de times
     if competicao.times.count() >= competicao.numero_de_times:
         return HttpResponse("Limite de times atingido.")
 
     if request.method == 'POST':
-        nome = request.POST.get('nome')
+        nome = request.POST.get('nome', '').strip()
         if nome:
-            Time.objects.create(nome=nome, competicao=competicao)
-            return redirect('editar_times', competicao_id=competicao.id)
+            
+            existe = Time.objects.filter(
+                competicao=competicao,
+                nome__iexact=nome
+            ).exists()
+            if existe:
+                messages.error(
+                    request,
+                    f"Já existe um time chamado “{nome}” nesta competição.",
+                    extra_tags='danger'
+                )
+            else:
+                Time.objects.create(nome=nome, competicao=competicao)
+        else:
+            messages.error(request, "O nome do time não pode ficar em branco.", extra_tags='danger')
+
+
+        return redirect('editar_times', competicao_id=competicao.id)
 
     return render(request, 'adicionar_time_crud.html', {'competicao': competicao})
 
