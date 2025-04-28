@@ -58,11 +58,36 @@ Cypress.Commands.add('criarCompeticao', () => {
 
 
 Cypress.Commands.add('criarTime', () => {
-    cy.get('.card-actions > a.btn').click();
-    cy.get('[href="/competicao/36/editar_times/"]').click();
-    cy.get('#nome').type('time Cypress');
-    cy.get('.form-actions > .btn').click();
-    cy.wait(1000);
+  cy.get('.card-actions > a.btn > .fas').click();
+  cy.url().then((url) => {
+    const regex = /editar(\d+)\/editar/;
+    const match = url.match(regex);
+
+    if (match) {
+        const competicaoId = match[1];
+        cy.log('ID da competição:', competicaoId);
+
+        cy.get(`[href="/competicao/${competicaoId}/editar_times/"]`).click();
+    } else {
+        throw new Error('ID da competição não encontrado na URL!');
+    }
+});
+  cy.get('#nome').type('time Cypress');
+  cy.get('.form-actions > .btn').click();
+  cy.wait(1000);
+});
+
+
+Cypress.Commands.add('excluirTime', () => {
+  cy.get('.team-delete-form > .btn').click();
+  cy.wait(1000);
+});
+
+
+Cypress.Commands.add('criarTimeRepetido', () => {
+  cy.get('#nome').type('time Cypress');
+  cy.get('.form-actions > .btn').click();
+  cy.wait(1000);
 });
 
 
@@ -95,5 +120,16 @@ describe('CRUD de times', () => {
         cy.loginGerenciador();
         cy.criarCompeticao();
         cy.criarTime();
+        cy.criarTimeRepetido();
     });
+    
+    
+    it('Cenario 3: Excluir Competição', () => {
+       cy.signinGerenciador();
+       cy.loginGerenciador();
+       cy.criarCompeticao();
+       cy.criarTime();
+       cy.excluirTime();
+    });
+
 });
