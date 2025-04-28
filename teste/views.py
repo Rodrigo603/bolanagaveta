@@ -470,38 +470,108 @@ def editar_estatisticas_partida(request, partida_id):
     jogadores_time_visitante = partida.time_visitante.jogadores.all()
 
     if request.method == "POST":
-        # Atualiza placar da partida
-        partida.gols_time_casa = int(request.POST.get("gols_time_casa", 0))
-        partida.gols_time_visitante = int(request.POST.get("gols_time_visitante", 0))
-        partida.finalizada = True
-        partida.save()
+        gols_time_casa = int(request.POST.get("gols_time_casa", 0))
+        gols_time_visitante = int(request.POST.get("gols_time_visitante", 0))
 
-        # Apaga estatísticas anteriores (caso esteja editando)
+        # Limpa estatísticas anteriores
         Gol.objects.filter(partida=partida).delete()
         Assistencia.objects.filter(partida=partida).delete()
         Cartao.objects.filter(partida=partida).delete()
 
-        # Processa jogadores dos dois times
         todos_jogadores = list(jogadores_time_casa) + list(jogadores_time_visitante)
+
+        total_gols_casa = 0
+        total_gols_visitante = 0
+
+        gols_por_jogador = {}
+        assistencias_por_jogador = {}
 
         for jogador in todos_jogadores:
             gols = int(request.POST.get(f"gols_{jogador.id}", 0))
             assistencias = int(request.POST.get(f"assistencias_{jogador.id}", 0))
+
+            gols_por_jogador[jogador.id] = gols
+            assistencias_por_jogador[jogador.id] = assistencias
+
+            if jogador in jogadores_time_casa:
+                total_gols_casa += gols
+            else:
+                total_gols_visitante += gols
+
+        if total_gols_casa != gols_time_casa or total_gols_visitante != gols_time_visitante:
+            messages.add_message(request, messages.ERROR,
+                f"Erro: O placar informado foi {gols_time_casa}x{gols_time_visitante}, "
+                f"mas você atribuiu {total_gols_casa} gols para o time da casa e "
+                f"{total_gols_visitante} para o visitante.", extra_tags='danger')
+            return render(request, 'editar_estatisticas_partida.html', {
+                'partida': partida,
+                'jogadores_time_casa': jogadores_time_casa,
+                'jogadores_time_visitante': jogadores_time_visitante,
+            })
+
+        # Agora validar assistências:
+        # Para time da casa
+        gols_gerais_casa = sum(gols_por_jogador[j.id] for j in jogadores_time_casa)
+        gols_por_jogador_casa = {j.id: gols_por_jogador[j.id] for j in jogadores_time_casa}
+        
+        total_assistencias_casa = 0
+        for jogador in jogadores_time_casa:
+            assistencias = assistencias_por_jogador[jogador.id]
+            gols_dos_outros = gols_gerais_casa - gols_por_jogador_casa[jogador.id]
+
+            if assistencias > gols_dos_outros:
+                messages.add_message(request, messages.ERROR,
+                    f"Erro: O jogador {jogador.username} registrou {assistencias} assistências, "
+                    f"mas o time teve apenas {gols_dos_outros} gols feitos por outros jogadores.", extra_tags='danger')
+                return render(request, 'editar_estatisticas_partida.html', {
+                    'partida': partida,
+                    'jogadores_time_casa': jogadores_time_casa,
+                    'jogadores_time_visitante': jogadores_time_visitante,
+                })
+            total_assistencias_casa += assistencias
+
+        # Para time visitante
+        gols_gerais_visitante = sum(gols_por_jogador[j.id] for j in jogadores_time_visitante)
+        gols_por_jogador_visitante = {j.id: gols_por_jogador[j.id] for j in jogadores_time_visitante}
+
+        total_assistencias_visitante = 0
+        for jogador in jogadores_time_visitante:
+            assistencias = assistencias_por_jogador[jogador.id]
+            gols_dos_outros = gols_gerais_visitante - gols_por_jogador_visitante[jogador.id]
+
+            if assistencias > gols_dos_outros:
+                messages.add_message(request, messages.ERROR,
+                    f"Erro: O jogador {jogador.username} registrou {assistencias} assistências, "
+                    f"mas o time teve apenas {gols_dos_outros} gols feitos por outros jogadores.", extra_tags='danger')
+                return render(request, 'editar_estatisticas_partida.html', {
+                    'partida': partida,
+                    'jogadores_time_casa': jogadores_time_casa,
+                    'jogadores_time_visitante': jogadores_time_visitante,
+                })
+            total_assistencias_visitante += assistencias
+
+        # Tudo certo: salvar estatísticas
+        partida.gols_time_casa = gols_time_casa
+        partida.gols_time_visitante = gols_time_visitante
+        partida.finalizada = True
+        partida.save()
+
+        for jogador in todos_jogadores:
+            gols = gols_por_jogador[jogador.id]
+            assistencias = assistencias_por_jogador[jogador.id]
             amarelos = int(request.POST.get(f"amarelos_{jogador.id}", 0))
             vermelhos = int(request.POST.get(f"vermelhos_{jogador.id}", 0))
 
             for _ in range(gols):
                 Gol.objects.create(jogador=jogador, partida=partida)
-
             for _ in range(assistencias):
                 Assistencia.objects.create(jogador=jogador, partida=partida)
-
             for _ in range(amarelos):
                 Cartao.objects.create(jogador=jogador, partida=partida, tipo='amarelo')
-
             for _ in range(vermelhos):
                 Cartao.objects.create(jogador=jogador, partida=partida, tipo='vermelho')
 
+        messages.success(request, "Estatísticas da partida atualizadas com sucesso!")
         return redirect('gerenciar_partidas', competicao_id=partida.competicao.id)
 
     return render(request, 'editar_estatisticas_partida.html', {
