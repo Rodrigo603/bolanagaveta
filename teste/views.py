@@ -233,10 +233,15 @@ def aceitar_convite(request, convite_id):
     convite = get_object_or_404(Convite, id=convite_id, jogador=request.user)
 
     if request.method == 'POST':
+        # Aceita o convite
         convite.aceito = True
         convite.save()
-        # Mensagem de sucesso (já vem como "success" certinho)
-        messages.success(request, f'Você aceitou o convite para o time {convite.time.nome}!')
+
+        # Adiciona o jogador ao time
+        convite.time.jogadores.add(request.user)
+
+        messages.success(request, f'Você aceitou o convite para o time {convite.time.nome}! Agora você faz parte da competição {convite.time.competicao.nome}.')
+        return redirect('competicao_jogador_detalhes', competicao_id=convite.time.competicao.id)
 
     return redirect('convites_jogador')
 
