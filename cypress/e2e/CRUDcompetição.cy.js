@@ -47,6 +47,14 @@ Cypress.Commands.add('criarCompeticao', () => {
 });
 
 
+Cypress.Commands.add('criarCompeticaoIncompleta', () => {
+    cy.get('.card > .btn').click();
+    cy.get('#numero_de_times').type('4');
+    cy.get('#local').type('Recife');
+    cy.get('button.btn').click();
+});
+
+
 Cypress.Commands.add('excluirCompeticao', () => {
     cy.wait(1000);
     cy.get('form > .btn').click();
@@ -83,6 +91,7 @@ describe('CRUD da competicao', () => {
         cy.loginGerenciador();
         cy.criarCompeticao();
         cy.excluirCompeticao();
+        cy.wait(1000);
 
     });
     it('Cenario 3: Editar a competição', () => {
@@ -91,4 +100,11 @@ describe('CRUD da competicao', () => {
         cy.criarCompeticao();
         cy.editarCompeticao();
     });
+    it('cenario 4: Tentar cadastrar sem colocar todas as informações' , () => {
+        cy.signinGerenciador();
+        cy.loginGerenciador();
+        cy.criarCompeticaoIncompleta();
+        cy.wait(1000);
+    });
+
 });
