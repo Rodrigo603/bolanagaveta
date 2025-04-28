@@ -75,15 +75,11 @@ def criar_competicao(request):
         if not (nome and numero_de_times and local):
             messages.error(request, "Preencha todos os campos.", extra_tags="danger")
         else:
-           
-            existe = Competicao.objects.filter(
-                gerente=request.user,
-                nome__iexact=nome
-            ).exists()
-            if existe:
+            # checa globalmente se já existe esse nome
+            if Competicao.objects.filter(nome__iexact=nome).exists():
                 messages.error(
                     request,
-                    f"Você já tem uma competição chamada “{nome}”.",
+                    f"Já existe uma competição chamada “{nome}”. Escolha outro nome.",
                     extra_tags="danger"
                 )
             else:

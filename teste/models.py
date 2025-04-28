@@ -15,7 +15,7 @@ class Perfil(models.Model):
         return f"{self.user.username} - {self.get_tipo_usuario_display()}"
 
 class Competicao(models.Model):
-    nome = models.CharField(max_length=100)
+    nome = models.CharField(max_length=100, unique=True)
     numero_de_times = models.PositiveIntegerField()  
     local = models.CharField(max_length=100)  
     gerente = models.ForeignKey(User, on_delete=models.CASCADE)
