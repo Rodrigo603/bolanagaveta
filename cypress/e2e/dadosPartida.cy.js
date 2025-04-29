@@ -155,6 +155,35 @@ Cypress.Commands.add('registrarDados', () => {
 });
 
 
+Cypress.Commands.add('editarDados', () => {
+    cy.url().then((url) => {
+        const regex = /editar(\d+)\/editar/;
+        const match = url.match(regex);
+    
+        if (match) {
+            const competicaoId = match[1];
+            cy.log('ID da competição:', competicaoId);
+    
+            cy.get(`[href="/competicao/${competicaoId}/partidas/"]`).click();
+        } else {
+            throw new Error('ID da competição não encontrado na URL!');
+        }
+    });
+    cy.get('.btn-info').click();
+    cy.get('form > :nth-child(2) > .form-control').type('1');
+    cy.get('form > :nth-child(3) > .form-control').type('1');
+    cy.get(':nth-child(5) > tbody > tr > :nth-child(2) > .form-control').type('1');
+    cy.get(':nth-child(5) > tbody > tr > :nth-child(3) > .form-control').type('0');
+    cy.get(':nth-child(5) > tbody > tr > :nth-child(4) > .form-control').type('1');
+    cy.get(':nth-child(7) > tbody > tr > :nth-child(2) > .form-control').type('1');
+    cy.get(':nth-child(7) > tbody > tr > :nth-child(3) > .form-control').type('0');
+    cy.get(':nth-child(7) > tbody > tr > :nth-child(4) > .form-control').type('0');
+    cy.get(':nth-child(7) > tbody > tr > :nth-child(5) > .form-control').type('1');
+    cy.get('.btn-success').click();
+
+});
+
+
 describe('Registro de Dados', () => {
 
     beforeEach(() => {
@@ -171,7 +200,19 @@ describe('Registro de Dados', () => {
         cy.criarPartida();
         cy.editarPartida();
         cy.registrarDados();
-        cy.get(':nth-child(4) > .btn').click();   
-    
+        cy.get('[data-cy="btn-voltar"]').click();
+        cy.wait(1000);
+    });
+
+
+    it('Cenario 2: editar os dados', () => {
+        cy.loginGerenciador();
+        cy.get('.card-actions > a.btn').click();
+        cy.editarPartida();
+        cy.registrarDados();
+        cy.get('.btn-info')
+        cy.get('[data-cy="btn-voltar"]').click();
+        cy.editarDados();
+        cy.get('[data-cy="btn-voltar"]').click();
     });
 });
