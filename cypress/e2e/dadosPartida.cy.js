@@ -10,6 +10,18 @@ Cypress.Commands.add('deleteUsers', () => {
 });
 
 
+Cypress.Commands.add('deleteGerenciador', () => {
+    return cy.exec('python delete_gerenciadores.py', { failOnNonZeroExit: false }).then((result) => {
+        console.log(result.stdout); 
+        if (result.stderr) {
+            console.error(result.stderr);
+        } else {
+            console.log('Gerenciadores excluídos com sucesso');
+        }
+    });
+});
+
+
 Cypress.Commands.add('deleteCompeticoes', () => {
     return cy.exec('python delete_competicoes.py', { failOnNonZeroExit: false }).then((result) => {
       console.log(result.stdout);
@@ -89,7 +101,6 @@ Cypress.Commands.add('criarTime2', () => {
   
 
 Cypress.Commands.add('criarPartida', () => {
-    cy.get('.btn-secondary').click();
     cy.url().then((url) => {
         const regex = /editar(\d+)\/editar/;
         const match = url.match(regex);
@@ -106,36 +117,12 @@ Cypress.Commands.add('criarPartida', () => {
     cy.get('#time_casa');
     cy.get('select[name="time_casa"]').select('time Cypress');
     cy.get('#time_visitante');
-    cy.get('select[name="time_visitante"]').select('time Cypress2');
+    cy.get('select[name="time_visitante"]').select('time Cypress 2');
     cy.get('#data').type('2025-04-29');
     cy.get('#hora').type('16:00');
     cy.get('form > .form-actions > .btn').click();
     cy.wait(1500);
 
-});
-
-Cypress.Commands.add('criarPartidaIncompleta', () => {
-    cy.get('.btn-secondary').click();
-    cy.url().then((url) => {
-        const regex = /editar(\d+)\/editar/;
-        const match = url.match(regex);
-    
-        if (match) {
-            const competicaoId = match[1];
-            cy.log('ID da competição:', competicaoId);
-    
-            cy.get(`[href="/competicao/${competicaoId}/partidas/"]`).click();
-        } else {
-            throw new Error('ID da competição não encontrado na URL!');
-        }
-    });
-    cy.get('#time_casa');
-    cy.get('select[name="time_casa"]').select('time Cypress');
-    cy.get('#time_visitante');
-    cy.get('select[name="time_visitante"]').select('time Cypress2');
-    cy.get('#hora').type('16:00');
-    cy.get('form > .form-actions > .btn').click();
-    cy.wait(1500);
 });
 
 
@@ -153,49 +140,38 @@ Cypress.Commands.add('editarPartida', () => {
   });
   
 
-describe('CRUD de partidas', () => {
-
-    beforeEach(() => {
-        cy.deleteUsers()
-          .then(() => cy.deleteCompeticoes())
-          .then(() => {
-              cy.clearCookies();
-              cy.clearLocalStorage();
-              cy.visit('/');
-    });
+Cypress.Commands.add('registrarDados', () => {
+    cy.get('.btn-success').click();
+    cy.get('form > :nth-child(2) > .form-control').type('3');
+    cy.get('form > :nth-child(3) > .form-control').type('2');
+    cy.get(':nth-child(5) > tbody > tr > :nth-child(2) > .form-control').type('3');
+    cy.get(':nth-child(5) > tbody > tr > :nth-child(3) > .form-control').type('0');
+    cy.get(':nth-child(5) > tbody > tr > :nth-child(4) > .form-control').type('1');
+    cy.get(':nth-child(7) > tbody > tr > :nth-child(2) > .form-control').type('2');
+    cy.get(':nth-child(7) > tbody > tr > :nth-child(3) > .form-control').type('0');
+    cy.get(':nth-child(7) > tbody > tr > :nth-child(4) > .form-control').type('0');
+    cy.get(':nth-child(7) > tbody > tr > :nth-child(5) > .form-control').type('1');
+    cy.get('.btn-success').click();
 });
 
 
-    it('Cenario 1: Criação de partida bem sucedida', () => {
-        cy.signinGerenciador();
-        cy.loginGerenciador();
-        cy.criarCompeticao();
-        cy.editarCompeticao();
-        cy.criarTime();
-        cy.criarTime2();
-        cy.criarPartida();
+describe('Registro de Dados', () => {
+
+    beforeEach(() => {
+        cy.clearCookies();
+        cy.clearLocalStorage();
+        cy.visit('/');
     });
 
 
-    it('Cenario 2: Criação de partida com dados incompletos' , () => {
-        cy.signinGerenciador();
+    it('Cenario 1:Registrar os dados com sucesso ', () => {
+        cy.get('.nav-links > :nth-child(2)').click();
         cy.loginGerenciador();
-        cy.criarCompeticao();
-        cy.editarCompeticao();
-        cy.criarTime();
-        cy.criarTime2();
-        cy.criarPartidaIncompleta();
-    });
-
-
-    it('Cenario 3: Editar uma partida', () => {
-        cy.signinGerenciador();
-        cy.loginGerenciador();
-        cy.criarCompeticao();
-        cy.editarCompeticao();
-        cy.criarTime();
-        cy.criarTime2();
+        cy.get('.card-actions > a.btn').click();
         cy.criarPartida();
         cy.editarPartida();
+        cy.registrarDados();
+        cy.get(':nth-child(4) > .btn').click();   
+    
     });
 });

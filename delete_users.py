@@ -4,9 +4,6 @@ import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bola_na_gaveta.settings')  
 django.setup()
 
-
-
-
 from django.contrib.auth.models import User
 users = User.objects.all()
 
