@@ -63,8 +63,13 @@
         </tbody>
     </table>
 
-    <button type="submit" class="btn btn-success mt-3">
-        <i class="fas fa-save"></i> Salvar Estatísticas
-    </button>
+    <div class="mt-3">
+        <a href="{% url 'gerenciar_partidas' partida.competicao.id %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+        <button type="submit" class="btn btn-success">
+            <i class="fas fa-save"></i> Salvar Estatísticas
+        </button>
+    </div>
 </form>
 {% endblock %}
