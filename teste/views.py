@@ -152,7 +152,11 @@ def adicionar_time(request, competicao_id):
 
     # limite de times
     if competicao.times.count() >= competicao.numero_de_times:
-        return HttpResponse("Limite de times atingido.")
+        messages.error(
+                    request,
+                    f"Limite de times atingido.",
+                    extra_tags='danger'
+                )
 
     if request.method == 'POST':
         nome = request.POST.get('nome', '').strip()
