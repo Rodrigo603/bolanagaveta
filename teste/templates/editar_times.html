@@ -6,7 +6,6 @@
 {% block content %}
 <section class="page-header">
     <h1><i class="fas fa-users"></i> Editar Times da Competição: {{ competicao.nome }}</h1>
-    <a href="{% url 'editar_competicao' competicao.id %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Voltar</a>
 </section>
 
 <div class="card">
@@ -91,5 +90,7 @@
     <p class="empty-message"><i class="fas fa-info-circle"></i> Não há times cadastrados ainda.</p>
     {% endif %}
 </div>
+
+<a href="{% url 'editar_competicao' competicao.id %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Voltar para Editar Competição</a>
 
 {% endblock %}
