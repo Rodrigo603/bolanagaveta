@@ -206,13 +206,11 @@ describe('Registro de Dados', () => {
 
 
     it('Cenario 2: editar os dados', () => {
+        cy.get(':nth-child(2) > a').click();
         cy.loginGerenciador();
         cy.get('.card-actions > a.btn').click();
-        cy.editarPartida();
-        cy.registrarDados();
-        cy.get('.btn-info')
-        cy.get('[data-cy="btn-voltar"]').click();
         cy.editarDados();
         cy.get('[data-cy="btn-voltar"]').click();
-    });
+        cy.wait(1000);
+    });     
 });
