@@ -77,7 +77,7 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
    Bugtracker
    ![Bugtracker](images/bugtracker.png)
 
-   Backlog jira
+   Backlog Jira
    ![backlog jira](images/BacklogJira2.jpg)
    
    Quadro jira 
@@ -91,6 +91,11 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
   [Testes Automatizados](https://www.youtube.com/watch?v=urJcFug87Fo)
 
   [CI/CD com build e deployment automatizado](https://www.youtube.com/watch?v=urJcFug87Fo)
+
+  Backlog Jira
+  ![BackLog Jira 3](https://github.com/user-attachments/assets/0b6f8df9-f464-4601-b169-640e0af6e4e7)
+
+
 
   
 
