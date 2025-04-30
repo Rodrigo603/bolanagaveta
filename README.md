@@ -83,3 +83,14 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
    Quadro jira 
    ![Quadro jira](images/QuadroJira2.jpg)
 </details>
+
+
+<details>
+  <summary>✅Entrega 03</summary>
+  
+  [Testes Automatizados](https://www.youtube.com/watch?v=urJcFug87Fo)
+
+  
+
+  
+</details>
