@@ -21,33 +21,34 @@
                         <li><a href="{% url 'lista_competicoes' %}">Competições</a></li>
                         <li><a href="{% url 'criar_competicao' %}">Nova Competição</a></li>
                     {% elif user.perfil.tipo_usuario == 'jogador' %}
-                        <li><a href="{% url 'pagina_jogador' %}">Meus Jogos</a></li>
+                        <li><a href="{% url 'pagina_jogador' %}">Home</a></li>
+                        <li><a href="{% url 'convites_jogador' %}">Convites</a></li>
                     {% endif %}
                     <li><a href="{% url 'logout' %}">Sair</a></li>
                 {% else %}
-                    <li><a href="{% url 'login' %}">Entrar</a></li>
                     <li><a href="{% url 'cadastro' %}">Cadastrar</a></li>
+                    <li><a href="{% url 'login' %}">Login</a></li>
                 {% endif %}
             </ul>
         </div>
     </header>
     
-    <main class="container">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
+        <main class="container">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            {% block content %}{% endblock %}
+        </main>
         
-        {% block content %}{% endblock %}
-    </main>
-    
-    <footer class="footer">
-        <div class="container">
-            <p> Bola na Gaveta - Sistema de Gerenciamento de Campeonatos</p>
-        </div>
-    </footer>
-</body>
-</html>
+        <footer class="footer">
+            <div class="container">
+                <p> Bola na Gaveta - Sistema de Gerenciamento de Campeonatos</p>
+            </div>
+        </footer>
+    </body>
+    </html>

@@ -73,6 +73,15 @@
                     {% csrf_token %}
                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir esta partida?');"><i class="fas fa-trash"></i> Excluir</button>
                 </form>
+                {% if not partida.finalizada %}
+                <a href="{% url 'editar_estatisticas_partida' partida.id %}" class="btn btn-sm btn-success">
+                    <i class="fas fa-check-circle"></i> Preencher Estatísticas
+                </a>
+                {% else %}
+                <a href="{% url 'editar_estatisticas_partida' partida.id %}" class="btn btn-sm btn-info">
+                    <i class="fas fa-chart-bar"></i> Ver Estatísticas
+                </a>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
@@ -83,6 +92,6 @@
 </div>
 
 <div class="form-actions">
-    <a href="{% url 'editar_competicao' competicao.id %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Voltar para Editar Competição</a>
+    <a href="{% url 'editar_competicao' competicao.id %}" class="btn btn-secondary" data-cy="btn-voltar"><i class="fas fa-arrow-left"></i> Voltar para Editar Competição</a>
 </div>
 {% endblock %}

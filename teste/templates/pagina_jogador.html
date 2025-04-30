@@ -1,11 +1,18 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Meus Jogos - Bola na Gaveta{% endblock %}
+{% block title %}Home - Bola na Gaveta{% endblock %}
 
 {% block content %}
-<div class="card">
-  <h1 class="card-title"><i class="fas fa-futbol"></i> Meus Jogos</h1>
+  <div class="card mb-4">
+    <div class="card-body text-center">
+      <h2 class="card-title">Convites</h2>
+      <p>Veja os convites que você recebeu para participar de times.</p>
+      <a href="{% url 'convites_jogador' %}" class="btn btn-success btn-lg">
+        <i class="fas fa-envelope"></i> Ver Meus Convites
+      </a>
+    </div>
+  </div>
   
   {% if user.time_set.all %}
     <div class="card">
@@ -17,6 +24,7 @@
               <th>Time</th>
               <th>Competição</th>
               <th>Local</th>
+              <th>    </th>
             </tr>
           </thead>
           <tbody>
@@ -25,6 +33,11 @@
                 <td>{{ time.nome }}</td>
                 <td>{{ time.competicao.nome }}</td>
                 <td>{{ time.competicao.local }}</td>
+                <td>
+                  <a href="{% url 'competicao_jogador_detalhes' time.competicao.id %}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-eye"></i> Acessar Competição
+                  </a>
+                </td>
               </tr>
             {% endfor %}
           </tbody>
@@ -48,4 +61,37 @@
     </ul>
   </div>
 </div>
+<div class="card">
+  <h2>Meus Próximos Jogos</h2>
+
+  {% if partidas %}
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Time da Casa</th>
+            <th>Time Visitante</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for partida in partidas %}
+            <tr>
+              <td>{{ partida.data|date:"d/m/Y" }}</td>
+              <td>{{ partida.hora|time:"H:i" }}</td>
+              <td>{{ partida.time_casa.nome }}</td>
+              <td>{{ partida.time_visitante.nome }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-warning">
+      Nenhuma partida futura encontrada.
+    </div>
+  {% endif %}
+</div>
+
 {% endblock %}

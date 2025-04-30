@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Meus Convites - Bola na Gaveta{% endblock %}
+
+{% block content %}
+
+<!-- CARD DE CONVITES -->
+<div class="card">
+  <h1 class="card-title"><i class="fas fa-envelope"></i> Meus Convites</h1>
+
+  {% if convites %}
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Competição</th>
+            <th>Enviado por</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for convite in convites %}
+            <tr>
+              <td>{{ convite.time.nome }}</td>
+              <td>{{ convite.time.competicao.nome }}</td>
+              <td>
+                {% if convite.enviado_por %}
+                  {{ convite.enviado_por.username }}
+                {% else %}
+                  <i>Desconhecido</i>
+                {% endif %}
+              </td>
+              <td>
+                <form method="post" action="{% url 'aceitar_convite' convite.id %}" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-success btn-sm">
+                    <i class="fas fa-check"></i> Aceitar
+                  </button>
+                </form>
+
+                <form method="post" action="{% url 'recusar_convite' convite.id %}" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger btn-sm">
+                    <i class="fas fa-times"></i> Recusar
+                  </button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      <p>Você não possui convites no momento.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

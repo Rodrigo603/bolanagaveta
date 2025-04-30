@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Minhas Classificações - Bola na Gaveta{% endblock %}
+{% block content %}
+
+<h1><i class="fas fa-trophy"></i> Classificação das Competições</h1>
+
+{% if tabelas %}
+  {% for tabela in tabelas %}
+    <div class="card mb-4">
+      <div class="card-header">
+        <h4>{{ tabela.competicao.nome }} - {{ tabela.competicao.local }}</h4>
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-striped mb-0">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Pontos</th>
+              <th>J</th>
+              <th>V</th>
+              <th>E</th>
+              <th>D</th>
+              <th>GP</th>
+              <th>GC</th>
+              <th>SG</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for linha in tabela.classificacao %}
+            <tr>
+              <td>{{ linha.time.nome }}</td>
+              <td>{{ linha.pontos }}</td>
+              <td>{{ linha.jogos }}</td>
+              <td>{{ linha.vitorias }}</td>
+              <td>{{ linha.empates }}</td>
+              <td>{{ linha.derrotas }}</td>
+              <td>{{ linha.gols_marcados }}</td>
+              <td>{{ linha.gols_sofridos }}</td>
+              <td>{{ linha.saldo }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="alert alert-info">
+    Tabela na Criada, ainda não houve nenhuma partida jogada.
+  </div>
+{% endif %}
+
+{% endblock %}
