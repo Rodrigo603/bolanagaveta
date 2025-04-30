@@ -90,6 +90,10 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
   
   [Testes Automatizados](https://www.youtube.com/watch?v=urJcFug87Fo)
 
+  [CI/CD com build e deployment automatizado](https://www.youtube.com/watch?v=urJcFug87Fo)
+
+  
+
   
 
   
