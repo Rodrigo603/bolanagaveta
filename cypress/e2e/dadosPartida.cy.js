@@ -32,6 +32,16 @@ Cypress.Commands.add('deleteCompeticoes', () => {
 });
 
 
+Cypress.Commands.add('deleteTimes', () => {
+    return cy.exec('python delete_times.py', { failOnNonZeroExit: false }).then((result) => {
+      console.log(result.stdout);
+      if (result.stderr) {
+        console.error(result.stderr);
+      }
+    });
+});
+
+
   Cypress.Commands.add('signinGerenciador', () => {
     cy.visit('/');
     cy.get('.nav-links > :nth-child(1) > a').click();
@@ -50,6 +60,46 @@ Cypress.Commands.add('loginGerenciador', () => {
     cy.get('#password').type('12345');
     cy.get('.btn').click();
 });
+
+
+Cypress.Commands.add('signinJogador', () => {
+    cy.visit('/');
+    cy.get('.nav-links > :nth-child(1) > a').click();
+    cy.get('#tipo_usuario');
+    cy.get('select[name="tipo_usuario"]').select('Jogador');
+    cy.get('#username').type('teste jogador');
+    cy.get('#email').type('jogador@email.com');
+    cy.get('#password1').type('12345');
+    cy.get('#password2').type('12345');
+    cy.get('.btn').click();
+});
+
+
+Cypress.Commands.add('loginJogador', () => {
+    cy.get('#username').type('teste jogador');
+    cy.get('#password').type('12345');
+    cy.get('.btn').click();
+  });
+
+
+Cypress.Commands.add('signinJogador2', () => {
+    cy.visit('/');
+    cy.get('.nav-links > :nth-child(1) > a').click();
+    cy.get('#tipo_usuario');
+    cy.get('select[name="tipo_usuario"]').select('Jogador');
+    cy.get('#username').type('teste jogador2');
+    cy.get('#email').type('jogador2@email.com');
+    cy.get('#password1').type('12345');
+    cy.get('#password2').type('12345');
+    cy.get('.btn').click();
+});
+
+
+Cypress.Commands.add('loginJogador2', () => {
+    cy.get('#username').type('teste jogador2');
+    cy.get('#password').type('12345');
+    cy.get('.btn').click();
+  });
 
 
 Cypress.Commands.add('criarCompeticao', () => {
@@ -75,7 +125,6 @@ Cypress.Commands.add('editarCompeticao', () => {
 
 
 Cypress.Commands.add('criarTime', () => {
-    cy.get('.card-actions > a.btn > .fas').click();
     cy.url().then((url) => {
       const regex = /editar(\d+)\/editar/;
       const match = url.match(regex);
@@ -117,7 +166,7 @@ Cypress.Commands.add('criarPartida', () => {
     cy.get('#time_casa');
     cy.get('select[name="time_casa"]').select('time Cypress');
     cy.get('#time_visitante');
-    cy.get('select[name="time_visitante"]').select('time Cypress 2');
+    cy.get('select[name="time_visitante"]').select('time Cypress2');
     cy.get('#data').type('2025-04-29');
     cy.get('#hora').type('16:00');
     cy.get('form > .form-actions > .btn').click();
@@ -156,19 +205,6 @@ Cypress.Commands.add('registrarDados', () => {
 
 
 Cypress.Commands.add('editarDados', () => {
-    cy.url().then((url) => {
-        const regex = /editar(\d+)\/editar/;
-        const match = url.match(regex);
-    
-        if (match) {
-            const competicaoId = match[1];
-            cy.log('ID da competição:', competicaoId);
-    
-            cy.get(`[href="/competicao/${competicaoId}/partidas/"]`).click();
-        } else {
-            throw new Error('ID da competição não encontrado na URL!');
-        }
-    });
     cy.get('.btn-info').click();
     cy.get('form > :nth-child(2) > .form-control').type('1');
     cy.get('form > :nth-child(3) > .form-control').type('1');
@@ -183,22 +219,74 @@ Cypress.Commands.add('editarDados', () => {
 
 });
 
+Cypress.Commands.add('convidarJogador', () => {
+    cy.get('select.form-control').eq(0).select('teste jogador');
+    cy.get(':nth-child(1) > .team-players > .add-player-form > .form-group > .btn').click();
+});
+
+
+Cypress.Commands.add('convidarJogador2', () => {
+    cy.get('select.form-control').eq(1).select('teste jogador2');
+    cy.get(':nth-child(2) > .team-players > .add-player-form > .form-group > .btn').click();
+});
+
+
+Cypress.Commands.add('aceitarConvite', () => {
+    cy.get('.btn').click();
+    cy.get('form[action^="/convite/"][action$="/aceitar/"]')
+    .first() 
+    .then(($form) => {
+        const action = $form.attr('action');
+        const match = action.match(/\/convite\/(\d+)\/aceitar\//);
+        const conviteId = match ? match[1] : null;
+
+    cy.log('Convite ID encontrado:', conviteId);
+
+    cy.wrap($form).find('.btn').click();
+  });
+
+});
+
+
 
 describe('Registro de Dados', () => {
 
     beforeEach(() => {
-        cy.clearCookies();
-        cy.clearLocalStorage();
-        cy.visit('/');
+        cy.deleteUsers()
+          .then(() => cy.deleteCompeticoes())
+          .then(() => cy.deleteTimes())
+          .then(() => {
+              cy.clearCookies();
+              cy.clearLocalStorage();
+              cy.visit('/');
     });
-
+});
 
     it('Cenario 1:Registrar os dados com sucesso ', () => {
-        cy.get('.nav-links > :nth-child(2)').click();
+        cy.signinJogador();
+        cy.loginJogador();
+        cy.get(':nth-child(3) > a').click();
+        cy.signinJogador2();
+        cy.loginJogador2();
+        cy.get(':nth-child(3) > a').click();
+        cy.signinGerenciador();
+        cy.loginGerenciador();
+        cy.criarCompeticao();
+        cy.get('.card-actions > a.btn').click();
+        cy.criarTime();
+        cy.criarTime2();
+        cy.convidarJogador();
+        cy.convidarJogador2();
+        cy.get(':nth-child(3) > a').click();
+        cy.loginJogador();
+        cy.aceitarConvite();
+        cy.get(':nth-child(3) > a').click();
+        cy.loginJogador2();
+        cy.aceitarConvite();
+        cy.get(':nth-child(3) > a').click();
         cy.loginGerenciador();
         cy.get('.card-actions > a.btn').click();
         cy.criarPartida();
-        cy.editarPartida();
         cy.registrarDados();
         cy.get('[data-cy="btn-voltar"]').click();
         cy.wait(1000);
@@ -206,9 +294,31 @@ describe('Registro de Dados', () => {
 
 
     it('Cenario 2: editar os dados', () => {
-        cy.get(':nth-child(2) > a').click();
+        cy.signinJogador();
+        cy.loginJogador();
+        cy.get(':nth-child(3) > a').click();
+        cy.signinJogador2();
+        cy.loginJogador2();
+        cy.get(':nth-child(3) > a').click();
+        cy.signinGerenciador();
+        cy.loginGerenciador();
+        cy.criarCompeticao();
+        cy.get('.card-actions > a.btn').click();
+        cy.criarTime();
+        cy.criarTime2();
+        cy.convidarJogador();
+        cy.convidarJogador2();
+        cy.get(':nth-child(3) > a').click();
+        cy.loginJogador();
+        cy.aceitarConvite();
+        cy.get(':nth-child(3) > a').click();
+        cy.loginJogador2();
+        cy.aceitarConvite();
+        cy.get(':nth-child(3) > a').click();
         cy.loginGerenciador();
         cy.get('.card-actions > a.btn').click();
+        cy.criarPartida();
+        cy.registrarDados();
         cy.editarDados();
         cy.get('[data-cy="btn-voltar"]').click();
         cy.wait(1000);

@@ -124,7 +124,7 @@ describe('CRUD de times', () => {
     });
     
     
-    it('Cenario 3: Excluir Competição', () => {
+    it('Cenario 3: Excluir Time', () => {
        cy.signinGerenciador();
        cy.loginGerenciador();
        cy.criarCompeticao();
