@@ -113,7 +113,7 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
   ![BugtrackerOpen](images/Bugtracker2.png)
 
   Closed
-  ![BugtrackerClosed](images/bugtracker.png)
+  ![BugtrackerClosed](images/BacklogClosed.png)
 
   ## Relatorio em Par
 
