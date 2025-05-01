@@ -77,9 +77,47 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
    Bugtracker
    ![Bugtracker](images/bugtracker.png)
 
-   Backlog jira
+   Backlog Jira
    ![backlog jira](images/BacklogJira2.jpg)
    
    Quadro jira 
    ![Quadro jira](images/QuadroJira2.jpg)
+</details>
+
+
+<details>
+  <summary>✅Entrega 03</summary>
+  
+  ## Screencasts 
+
+  [Testes Automatizados](https://www.youtube.com/watch?v=urJcFug87Fo)
+
+  [CI/CD](https://www.youtube.com/watch?v=JWGYvew3tE8)
+
+  [Figma](https://www.youtube.com/watch?v=L9Q5eW7Ado0)
+
+  [Deploy](https://www.youtube.com/watch?v=YFI_4zIx9QI)
+
+  ## Jira 
+
+  Backlog Jira
+  ![BackLog Jira 3](images/Backlog3.png)
+
+  Quadro Jira
+  ![Quadro3](images/Quadro3.png)
+
+
+  ## Bugtracker
+
+  Open
+  ![BugtrackerOpen](images/Bugtracker2.png)
+
+  Closed
+  ![BugtrackerClosed](images/BacklogClosed.png)
+
+  ## Relatorio em Par
+
+  [Relatorio em par](https://docs.google.com/document/d/1VDtgrqVjuDC7AajdQb2aGRrdOP06M_W2g07NeVBMsKk/edit?tab=t.0)
+
+  
 </details>
