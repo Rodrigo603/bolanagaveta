@@ -42,7 +42,7 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
   <a href="https://www.figma.com/design/5ArQVPK11yIL3R4x4tkxAG/Bola-na-Gaveta?node-id=0-1&p=f&t=Qn5xgNrox2cDHicp-0">
     <img src="https://img.shields.io/badge/Figma-4B0082?style=for-the-badge&logo=Figma&logoColor=white" alt="Figma">
   </a>
-  <a href="https://bolanagaveta.azurewebsites.net/">
+  <a href="https://bola-na-gaveta.azurewebsites.net/">
     <img src="https://img.shields.io/badge/🏆%20BOLANAGAVETA-28a745?style=for-the-badge&logoColor=white" alt="Bolanagaveta">
   </a>
 </div>
