@@ -5,7 +5,7 @@ from .views import pagina_jogador, adicionar_time, editar_time, excluir_time
 from .views import convidar_jogador, convites_jogador,aceitar_convite, recusar_convite, remover_jogador_time 
 from .views import gerenciar_partidas, adicionar_partida, editar_partida, excluir_partida
 from .views import alternar_finalizacao_partida, historico_partidas_competicao, editar_estatisticas_partida, tabela_classificacao
-from .views import tabela_classificacao_jogador, competicao_jogador_detalhes, historico_partidas_competicao, ranking_jogadores
+from .views import tabela_classificacao_jogador, competicao_jogador_detalhes, historico_partidas_competicao, ranking_jogadores, meu_perfil
 
 urlpatterns = [
     path("", index_view, name="index"), 
@@ -27,6 +27,7 @@ urlpatterns = [
 
     path('pagina_jogador/',pagina_jogador, name='pagina_jogador'),
     path('convites/', convites_jogador, name='convites_jogador'),
+    path("meu-perfil/", meu_perfil, name="meu_perfil"),
     path('convite/<int:convite_id>/aceitar/', aceitar_convite, name='aceitar_convite'),
     path('convite/<int:convite_id>/recusar/', recusar_convite, name='recusar_convite'),
     path('historico/competicao/<int:competicao_id>/', historico_partidas_competicao, name='historico_partidas_competicao'),

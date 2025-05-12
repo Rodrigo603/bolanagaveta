@@ -14,6 +14,16 @@
     </div>
   </div>
   
+  <div class="card mb-4">
+  <div class="card-body text-center">
+    <h2 class="card-title">Meu Perfil</h2>
+    <p>Acompanhe seus dados de desempenho geral como jogador.</p>
+    <a href="{% url 'meu_perfil' %}" class="btn btn-primary btn-lg">
+      <i class="fas fa-user"></i> Ver Meu Perfil e Estatísticas
+    </a>
+  </div>
+  </div>
+
   {% if user.time_set.all %}
     <div class="card">
       <h2>Meus Times</h2>

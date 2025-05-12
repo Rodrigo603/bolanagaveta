@@ -1,18 +1,27 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-#Victor - Perfis Gerenciador e Jogador
 class Perfil(models.Model):
-    TIPOS_USUARIO = (
-        ('gerenciador', 'Gerenciador'),
-        ('jogador', 'Jogador'),
-    )
+    POSICOES = [
+        ('goleiro', 'Goleiro'),
+        ('zagueiro', 'Zagueiro'),
+        ('lateral', 'Lateral'),
+        ('volante', 'Volante'),
+        ('meia', 'Meia'),
+        ('ponta', 'Ponta'),
+        ('atacante', 'Atacante'),
+    ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    tipo_usuario = models.CharField(max_length=20, choices=TIPOS_USUARIO)
+    tipo_usuario = models.CharField(max_length=20)  # jogador ou gerenciador
+    foto = models.ImageField(upload_to='fotos_perfil/', null=True, blank=True)
+    posicao = models.CharField(max_length=20, choices=POSICOES, null=True, blank=True)
+    idade = models.PositiveIntegerField(null=True, blank=True)
+    peso = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    altura = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.get_tipo_usuario_display()}"
+        return self.user.username
 
 class Competicao(models.Model):
     nome = models.CharField(max_length=100, unique=True)

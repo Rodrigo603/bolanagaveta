@@ -777,3 +777,53 @@ def historico_partidas_competicao(request, competicao_id):
         'competicao': competicao,
         'partidas': partidas
     })
+
+@login_required
+def meu_perfil(request):
+    if request.user.perfil.tipo_usuario != 'jogador':
+        return redirect('lista_competicoes')
+
+    perfil = request.user.perfil
+
+    if request.method == 'POST':
+        perfil.posicao = request.POST.get('posicao')
+        perfil.idade = request.POST.get('idade')
+        perfil.peso = request.POST.get('peso')
+        perfil.altura = request.POST.get('altura')
+        if 'foto' in request.FILES:
+            perfil.foto = request.FILES['foto']
+        perfil.save()
+        messages.success(request, "Perfil atualizado com sucesso!")
+
+    # Estatísticas gerais
+    total_gols = Gol.objects.filter(jogador=request.user).count()
+    total_assistencias = Assistencia.objects.filter(jogador=request.user).count()
+    total_amarelos = Cartao.objects.filter(jogador=request.user, tipo='amarelo').count()
+    total_vermelhos = Cartao.objects.filter(jogador=request.user, tipo='vermelho').count()
+
+    # Estatísticas por competição
+    competicoes = set(time.competicao for time in request.user.time_set.all())
+
+    estatisticas_por_competicao = []
+    for comp in competicoes:
+        gols = Gol.objects.filter(partida__competicao=comp, jogador=request.user).count()
+        assistencias = Assistencia.objects.filter(partida__competicao=comp, jogador=request.user).count()
+        amarelos = Cartao.objects.filter(partida__competicao=comp, jogador=request.user, tipo='amarelo').count()
+        vermelhos = Cartao.objects.filter(partida__competicao=comp, jogador=request.user, tipo='vermelho').count()
+
+        estatisticas_por_competicao.append({
+            'competicao': comp,
+            'gols': gols,
+            'assistencias': assistencias,
+            'amarelos': amarelos,
+            'vermelhos': vermelhos
+        })
+
+    return render(request, 'meu_perfil.html', {
+        'perfil': perfil,
+        'total_gols': total_gols,
+        'total_assistencias': total_assistencias,
+        'cartoes_amarelos': total_amarelos,
+        'cartoes_vermelhos': total_vermelhos,
+        'estatisticas_por_competicao': estatisticas_por_competicao,
+    })

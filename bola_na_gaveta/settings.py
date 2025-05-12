@@ -49,6 +49,10 @@ else:
 
 # Application definition
 
+#Victor - Para Foto do Perfil
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 INSTALLED_APPS = [
     'teste.apps.TesteConfig',
     'django.contrib.admin',
