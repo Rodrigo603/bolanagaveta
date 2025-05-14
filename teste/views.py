@@ -894,18 +894,41 @@ from .models import ConviteCompeticao
 @login_required
 def auto_convite_competicao(request, competicao_id):
     competicao = get_object_or_404(Competicao, id=competicao_id)
-    
-    convite, created = ConviteCompeticao.objects.get_or_create(
-        jogador=request.user,
-        competicao=competicao
-    )
+    jogador = request.user
 
-    if not created:
-        messages.info(request, "Você já solicitou participação nesta competição.")
+    convite_existente = ConviteCompeticao.objects.filter(
+        jogador=jogador,
+        competicao=competicao
+    ).first()
+
+    # Verifica se jogador está em algum time da competição
+    esta_em_time = Time.objects.filter(competicao=competicao, jogadores=jogador).exists()
+
+    if convite_existente:
+        if convite_existente.status == 'pendente':
+            messages.info(request, "Você já solicitou participação nesta competição.")
+        elif convite_existente.status == 'aceito':
+            if esta_em_time:
+                messages.info(request, "Você já está participando desta competição.")
+            else:
+                convite_existente.status = 'pendente'
+                convite_existente.save()
+                messages.success(request, "Você foi removido da competição. Solicitação reenviada.")
+        elif convite_existente.status == 'recusado':
+            convite_existente.status = 'pendente'
+            convite_existente.save()
+            messages.success(request, "Solicitação reenviada. Aguarde nova avaliação do gerente.")
     else:
+        ConviteCompeticao.objects.create(
+            jogador=jogador,
+            competicao=competicao,
+            status='pendente'
+        )
         messages.success(request, "Solicitação enviada com sucesso. Aguarde aprovação do gerente.")
 
     return redirect('buscar_eventos_perto')
+
+
 
 @login_required
 def aceitar_convite_interface(request, convite_id):
