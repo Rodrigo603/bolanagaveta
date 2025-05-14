@@ -112,8 +112,12 @@ Cypress.Commands.add('criarCompeticao', () => {
     cy.get('.card > .btn').click();
     cy.get('#nome').type('Competicao Cypress');
     cy.get('#numero_de_times').type('4');
-    cy.get('#local').type('Recife');
-    cy.get('button.btn').click();
+    cy.get('#endereco_descritivo').type('Rua professor José Brandão,Boa Viagem - Recife/PE');
+    cy.get('.btn-sm').click();
+    cy.get('.form-actions > button.btn').click();
+    cy.get('#latitude').type('-8.0576316');
+    cy.get('#longitude').type('-34.8879238');
+    cy.get('.form-actions > button.btn').click();
 });
 
 
@@ -236,7 +240,7 @@ Cypress.Commands.add('convidarJogador2', () => {
 
 
 Cypress.Commands.add('aceitarConvite', () => {
-    cy.get(':nth-child(1) > .card-body > .btn').click();
+    cy.get(':nth-child(2) > .card-body > .btn').click();
     cy.get('form[action^="/convite/"][action$="/aceitar/"]')
     .first() 
     .then(($form) => {
