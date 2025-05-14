@@ -84,7 +84,7 @@ describe('CRUD da competicao', () => {
               cy.clearCookies();
               cy.clearLocalStorage();
               cy.visit('/');
-    });
+        });
 });
     
     

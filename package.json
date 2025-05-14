@@ -16,7 +16,7 @@
     "url": "https://github.com/Rodrigo603/projeto_fds/issues"
   },
   "homepage": "https://github.com/Rodrigo603/projeto_fds#readme",
-  "dependencies": {
-    "cypress": "^14.3.2"
+  "devDependencies": {
+    "cypress": "^14.3.3"
   }
 }
