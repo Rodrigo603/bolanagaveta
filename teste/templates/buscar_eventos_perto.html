@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Buscar Competições Perto{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2 class="mb-4 text-center">Buscar Competições Perto de Mim</h2>
+
+  <!-- Formulário com campo numérico de raio -->
+  <form method="get" class="mb-4 text-center">
+    <div class="row justify-content-center">
+      <div class="col-md-3">
+        <label for="raio" class="form-label">Raio de busca (km):</label>
+        <input type="number" id="raio" name="raio" class="form-control" placeholder="Ex: 5" min="1" max="100" required value="{{ raio|default:'10' }}">
+      </div>
+      <div class="col-md-3 align-self-end">
+        <button type="button" onclick="pegarLocalizacao()" class="btn btn-outline-primary w-100">
+          <i class="fas fa-map-marker-alt"></i> Buscar pelo raio
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Script para obter localização -->
+  <script>
+  function pegarLocalizacao() {
+    const raio = document.getElementById('raio').value;
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        window.location.href = `{% url 'buscar_eventos_perto' %}?lat=${lat}&lon=${lon}&raio=${raio}`;
+      });
+    } else {
+      alert("Seu navegador não suporta geolocalização.");
+    }
+  }
+  </script>
+
+  {% if eventos %}
+    <div class="row">
+      {% for item in eventos %}
+        {% with item.0 as c %}
+        <div class="col-md-6 mb-4">
+          <div class="card shadow">
+            <div class="card-body">
+              <h5 class="card-title">{{ c.nome }}</h5>
+              <p class="card-text">
+                📍 {{ c.endereco_descritivo }}<br>
+                {% if item.1 %}📏 {{ item.1 }} km de distância{% endif %}
+              </p>
+              {% if c.id %}
+              <a href="{% url 'competicao_jogador_detalhes' c.id %}" class="btn btn-sm btn-outline-primary">
+                <i class="fas fa-eye"></i> Ver Competição
+              </a>
+              <a href="{% url 'auto_convite_competicao' c.id %}" class="btn btn-sm btn-success">
+                <i class="fas fa-hand-paper"></i> Solicitar Participação
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endwith %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-warning text-center">Nenhuma competição encontrada no raio selecionado.</div>
+  {% endif %}
+</div>
+{% endblock %}

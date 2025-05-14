@@ -25,13 +25,27 @@ class Perfil(models.Model):
 
 class Competicao(models.Model):
     nome = models.CharField(max_length=100, unique=True)
-    numero_de_times = models.PositiveIntegerField()  
-    local = models.CharField(max_length=100)  
+    numero_de_times = models.PositiveIntegerField()
+    endereco_descritivo = models.CharField(max_length=200, default="Endereço não informado")
+    latitude = models.FloatField(default = 0.0)
+    longitude = models.FloatField(default = 0.0)    
     gerente = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.nome
     
+class ConviteCompeticao(models.Model):
+    jogador = models.ForeignKey(User, on_delete=models.CASCADE)
+    competicao = models.ForeignKey(Competicao, on_delete=models.CASCADE)
+    status = models.CharField(max_length=10, choices=[
+        ('pendente', 'Pendente'),
+        ('aceito', 'Aceito'),
+        ('recusado', 'Recusado')
+    ], default='pendente')
+    data_envio = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('jogador', 'competicao')
 
 class Time(models.Model):
     nome = models.CharField(max_length=100)

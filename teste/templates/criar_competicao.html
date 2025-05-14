@@ -22,9 +22,38 @@
         </div>
 
         <div class="form-group">
-            <label for="local">Local:</label>
-            <input type="text" id="local" name="local" class="form-control" required>
+            <label for="endereco_descritivo">Endereço Descritivo:</label>
+            <input type="text" id="endereco_descritivo" name="endereco_descritivo"
+                class="form-control" required
+                placeholder="Ex: Campo da Liberdade, Bairro Centro - Salvador/BA">
         </div>
+
+        <div class="form-group">
+            <label for="latitude">Latitude:</label>
+            <input type="text" id="latitude" name="latitude" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="longitude">Longitude:</label>
+            <input type="text" id="longitude" name="longitude" class="form-control" required>
+        </div>
+
+        <button type="button" class="btn btn-sm btn-outline-info mb-3" onclick="pegarLocalizacao()">
+            <i class="fas fa-location-arrow"></i> Usar Minha Localização
+        </button>
+
+        <script>
+        function pegarLocalizacao() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(pos) {
+                    document.getElementById("latitude").value = pos.coords.latitude;
+                    document.getElementById("longitude").value = pos.coords.longitude;
+                });
+            } else {
+                alert("Seu navegador não suporta geolocalização.");
+            }
+        }
+        </script>
 
         <div class="form-actions">
             <button type="submit" class="btn"><i class="fas fa-save"></i> Salvar</button>

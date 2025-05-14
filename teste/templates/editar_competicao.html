@@ -8,10 +8,11 @@
     <h1><i class="fas fa-edit"></i> Editar Competição</h1>
 </section>
 
+<!-- Formulário para editar dados da competição -->
 <div class="card">
     <form method="post">
         {% csrf_token %}
-        
+
         <div class="form-group">
             <label for="nome">Nome da Competição:</label>
             <input type="text" id="nome" name="nome" value="{{ competicao.nome }}" class="form-control" required>
@@ -23,17 +24,90 @@
         </div>
 
         <div class="form-group">
-            <label for="local">Local:</label>
-            <input type="text" id="local" name="local" value="{{ competicao.local }}" class="form-control" required>
+            <label for="endereco_descritivo">Endereço Descritivo:</label>
+            <input type="text" id="endereco_descritivo" name="endereco_descritivo" value="{{ competicao.endereco_descritivo }}" class="form-control" required>
         </div>
 
-        <div>
-            {% if classificacao %}
-                <hr class="my-4">
-                <h3><i class="fas fa-trophy"></i> Classificação Atual</h3>
-                <table class="table table-sm table-bordered mt-2">
-                <thead>
-                    <tr>
+        <div class="form-group">
+            <label for="latitude">Latitude:</label>
+            <input type="text" id="latitude" name="latitude" value="{{ competicao.latitude }}" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="longitude">Longitude:</label>
+            <input type="text" id="longitude" name="longitude" value="{{ competicao.longitude }}" class="form-control" required>
+        </div>
+
+        <button type="button" class="btn btn-sm btn-outline-info mb-3" onclick="pegarLocalizacao()">
+            <i class="fas fa-location-arrow"></i> Atualizar com Minha Localização
+        </button>
+
+        <script>
+        function pegarLocalizacao() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(pos) {
+                    document.getElementById("latitude").value = pos.coords.latitude;
+                    document.getElementById("longitude").value = pos.coords.longitude;
+                });
+            } else {
+                alert("Seu navegador não suporta geolocalização.");
+            }
+        }
+        </script>
+
+        <div class="form-actions mt-4">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Salvar</button>
+            <a href="{% url 'editar_times' competicao.id %}" class="btn btn-secondary"><i class="fas fa-users"></i> Editar Times</a>
+            <a href="{% url 'gerenciar_partidas' competicao.id %}" class="btn btn-secondary"><i class="fas fa-futbol"></i> Gerenciar Partidas</a>
+            <a href="{% url 'lista_competicoes' %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Voltar</a>
+        </div>
+    </form>
+</div>
+
+<!-- Seção separada: convites pendentes -->
+<div class="card mt-5">
+    <div class="card-body">
+        <h3><i class="fas fa-envelope"></i> Convites Pendentes</h3>
+
+        {% if convites %}
+        <ul class="list-group">
+            {% for convite in convites %}
+            <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <strong>{{ convite.jogador.username }}</strong>
+                </div>
+                <form method="post" action="{% url 'aceitar_convite_interface' convite.id %}" class="d-flex align-items-center">
+                    {% csrf_token %}
+                    <select name="time_id" class="form-select form-select-sm me-2" required>
+                        <option value="">Escolher Time</option>
+                        {% for time in times %}
+                            <option value="{{ time.id }}">{{ time.nome }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="fas fa-check"></i> Aceitar
+                    </button>
+                </form>
+                <a href="{% url 'recusar_convite_competicao' convite.id %}" class="btn btn-sm btn-danger ms-2">
+                    <i class="fas fa-times"></i> Recusar
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted">Nenhum convite pendente.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Classificação -->
+<div class="card mt-5">
+    <div class="card-body">
+        {% if classificacao %}
+        <h3><i class="fas fa-trophy"></i> Classificação Atual</h3>
+        <table class="table table-sm table-bordered mt-2">
+            <thead>
+                <tr>
                     <th>Time</th>
                     <th>Pontos</th>
                     <th>J</th>
@@ -43,11 +117,11 @@
                     <th>GP</th>
                     <th>GC</th>
                     <th>SG</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for linha in classificacao %}
-                    <tr>
+                </tr>
+            </thead>
+            <tbody>
+                {% for linha in classificacao %}
+                <tr>
                     <td>{{ linha.time.nome }}</td>
                     <td>{{ linha.pontos }}</td>
                     <td>{{ linha.jogos }}</td>
@@ -57,23 +131,15 @@
                     <td>{{ linha.gols_marcados }}</td>
                     <td>{{ linha.gols_sofridos }}</td>
                     <td>{{ linha.saldo }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-                </table>
-                {% else %}
-                <div class="alert alert-info mt-3">
-                    Ainda não há partidas finalizadas para gerar a classificação.
-                </div>
-                {% endif %}
-            </div>
-
-        <div class="form-actions">
-            <button type="submit" class="btn"><i class="fas fa-save"></i> Salvar</button>
-            <a href="{% url 'editar_times' competicao.id %}" class="btn btn-secondary"><i class="fas fa-users"></i> Editar Times</a>
-            <a href="{% url 'gerenciar_partidas' competicao.id %}" class="btn btn-secondary"><i class="fas fa-futbol"></i> Gerenciar Partidas</a>
-            <a href="{% url 'lista_competicoes' %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Voltar</a>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info mt-3">
+            Ainda não há partidas finalizadas para gerar a classificação.
         </div>
-    </form>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

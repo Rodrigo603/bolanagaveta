@@ -16,13 +16,13 @@
 
         <div>
           <input type="file" name="foto" id="foto" class="form-control mb-2">
-          <small class="text-muted">We only support PNG or JPG pictures.</small>
+
         </div>
       </div>
 
       <div class="col-md-9">
-        <h3 class="mb-3">{{ request.user.username }}</h3>
-        <h4>Basic Information</h4>
+        <h1 class="mb-3">{{ request.user.username }}</h1>
+
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="posicao" class="form-label">Posição</label>
@@ -54,18 +54,42 @@
 
   <hr>
 
-  <div class="card mb-4">
-    <div class="card-body">
-      <h4 class="card-title">Estatísticas Totais</h4>
-      <ul class="mb-0">
-        <li><strong>Gols:</strong> {{ total_gols }}</li>
-        <li><strong>Assistências:</strong> {{ total_assistencias }}</li>
-        <li><strong>Cartões Amarelos:</strong> {{ cartoes_amarelos }}</li>
-        <li><strong>Cartões Vermelhos:</strong> {{ cartoes_vermelhos }}</li>
-      </ul>
+<div class="card mb-4">
+  <div class="card-body">
+    <h4 class="card-title mb-4 text-center">
+      <i class="fas fa-chart-line text-success"></i> Estatísticas Totais
+    </h4>
+
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 3rem; flex-wrap: nowrap; overflow-x: auto;">
+
+      <div style="display: flex; align-items: center; white-space: nowrap; font-size: 1.2rem;">
+        <i class="fas fa-futbol text-primary me-2" style="font-size: 1.6rem;"></i>
+        <strong class="me-1">Gols: {{ total_gols }}</strong>
+      </div>
+
+      <div style="display: flex; align-items: center; white-space: nowrap; font-size: 1.2rem;">
+        <i class="fas fa-hands-helping text-success me-2" style="font-size: 1.6rem;"></i>
+        <strong class="me-1">Assistências: {{ total_assistencias }}</strong>
+      </div>
+
+      <div style="display: flex; align-items: center; white-space: nowrap; font-size: 1.2rem;">
+        <i class="fas fa-square text-warning me-2" style="font-size: 1.6rem;"></i>
+        <strong class="me-1">Amarelos: {{ cartoes_amarelos }}</strong>
+      </div>
+
+      <div style="display: flex; align-items: center; white-space: nowrap; font-size: 1.2rem;">
+        <i class="fas fa-square text-danger me-2" style="font-size: 1.6rem;"></i>
+        <strong class="me-1">Vermelhos: {{ cartoes_vermelhos }}</strong>
+      </div>
+
     </div>
   </div>
+</div>
 
+
+
+
+  <!-- Estatísticas por competição -->
   <div class="card mb-4">
     <div class="card-body">
       <h4 class="card-title">Estatísticas por Competição</h4>

@@ -68,30 +68,29 @@ def criar_competicao(request):
         return redirect('pagina_jogador')
 
     if request.method == "POST":
-        nome             = request.POST.get("nome", "").strip()
-        numero_de_times  = request.POST.get("numero_de_times")
-        local            = request.POST.get("local", "").strip()
+        nome = request.POST.get("nome", "").strip()
+        numero_de_times = request.POST.get("numero_de_times")
+        endereco = request.POST.get("endereco_descritivo", "").strip()
+        latitude = request.POST.get("latitude")
+        longitude = request.POST.get("longitude")
 
-        if not (nome and numero_de_times and local):
+        if not (nome and numero_de_times and endereco and latitude and longitude):
             messages.error(request, "Preencha todos os campos.", extra_tags="danger")
+        elif Competicao.objects.filter(nome__iexact=nome).exists():
+            messages.error(request, f"Já existe uma competição chamada “{nome}”.", extra_tags="danger")
         else:
-            # checa globalmente se já existe esse nome
-            if Competicao.objects.filter(nome__iexact=nome).exists():
-                messages.error(
-                    request,
-                    f"Já existe uma competição chamada “{nome}”. Escolha outro nome.",
-                    extra_tags="danger"
-                )
-            else:
-                Competicao.objects.create(
-                    nome=nome,
-                    numero_de_times=int(numero_de_times),
-                    local=local,
-                    gerente=request.user
-                )
-                return redirect("lista_competicoes")
+            Competicao.objects.create(
+                nome=nome,
+                numero_de_times=int(numero_de_times),
+                endereco_descritivo=endereco,
+                latitude=float(latitude),
+                longitude=float(longitude),
+                gerente=request.user
+            )
+            return redirect("lista_competicoes")
 
     return render(request, "criar_competicao.html")
+
 
 @login_required
 def lista_competicoes(request):
@@ -114,16 +113,26 @@ def editar_competicao(request, id):
     if request.method == 'POST':
         competicao.nome = request.POST.get('nome')
         competicao.numero_de_times = request.POST.get('numero_de_times')
-        competicao.local = request.POST.get('local')
+        competicao.endereco_descritivo = request.POST.get('endereco_descritivo')
+        competicao.latitude = request.POST.get('latitude')
+        competicao.longitude = request.POST.get('longitude')
         competicao.save()
         return redirect('lista_competicoes')
 
     classificacao = calcular_classificacao(competicao)
 
+    # 👇 Adicione essas duas linhas abaixo
+    convites = ConviteCompeticao.objects.filter(competicao=competicao, status='pendente')
+    times = Time.objects.filter(competicao=competicao)
+
     return render(request, 'editar_competicao.html', {
         'competicao': competicao,
         'classificacao': classificacao,
+        'convites': convites,
+        'times': times
     })
+
+
 
 @login_required
 def excluir_competicao(request, id):
@@ -827,3 +836,110 @@ def meu_perfil(request):
         'cartoes_vermelhos': total_vermelhos,
         'estatisticas_por_competicao': estatisticas_por_competicao,
     })
+
+
+
+## Buscar por Competições e Peladas perto do Jogador -Victor
+
+from math import radians, sin, cos, sqrt, atan2
+
+def calcular_distancia_km(lat1, lon1, lat2, lon2):
+    R = 6371  # Raio da Terra em km
+    dlat = radians(lat2 - lat1)
+    dlon = radians(lon2 - lon1)
+    a = sin(dlat/2)**2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon/2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    return R * c
+
+@login_required
+def buscar_eventos_perto(request):
+    if request.user.perfil.tipo_usuario != 'jogador':
+        return redirect('pagina_gerente')
+
+    termo = request.GET.get("termo", "").strip()
+    lat = request.GET.get("lat")
+    lon = request.GET.get("lon")
+
+    eventos = []
+
+    # 🔍 FILTRO POR TEXTO
+    if termo:
+        eventos = Competicao.objects.filter(endereco_descritivo__icontains=termo)
+        tipo_busca = f'Competições encontradas para "{termo}"'
+
+    # 📍 FILTRO POR DISTÂNCIA
+    elif lat and lon:
+        lat = float(lat)
+        lon = float(lon)
+        tipo_busca = "Competições até 10km de você"
+        for comp in Competicao.objects.all():
+            dist = calcular_distancia_km(lat, lon, comp.latitude, comp.longitude)
+            if dist <= 10:
+                eventos.append((comp, round(dist, 2)))
+        eventos.sort(key=lambda x: x[1])  # ordena pela menor distância
+
+    else:
+        tipo_busca = "Nenhum filtro aplicado"
+
+    return render(request, "buscar_eventos_perto.html", {
+        "tipo_busca": tipo_busca,
+        "termo": termo,
+        "lat": lat,
+        "lon": lon,
+        "eventos": eventos
+    })
+
+from .models import ConviteCompeticao
+
+@login_required
+def auto_convite_competicao(request, competicao_id):
+    competicao = get_object_or_404(Competicao, id=competicao_id)
+    
+    convite, created = ConviteCompeticao.objects.get_or_create(
+        jogador=request.user,
+        competicao=competicao
+    )
+
+    if not created:
+        messages.info(request, "Você já solicitou participação nesta competição.")
+    else:
+        messages.success(request, "Solicitação enviada com sucesso. Aguarde aprovação do gerente.")
+
+    return redirect('buscar_eventos_perto')
+
+@login_required
+def aceitar_convite_interface(request, convite_id):
+    convite = get_object_or_404(ConviteCompeticao, id=convite_id)
+
+    # Verifica se o gerente é dono da competição
+    if convite.competicao.gerente != request.user:
+        messages.error(request, "Você não tem permissão para aceitar este convite.")
+        return redirect('editar_competicao', id=convite.competicao.id)
+
+    if request.method == "POST":
+        time_id = request.POST.get("time_id")
+        if not time_id:
+            messages.error(request, "Você deve selecionar um time.")
+            return redirect('editar_competicao', id=convite.competicao.id)
+
+        time = get_object_or_404(Time, id=time_id, competicao=convite.competicao)
+
+        # Marca convite como aceito e adiciona o jogador ao time
+        convite.status = 'aceito'
+        convite.save()
+
+        time.jogadores.add(convite.jogador)
+
+        messages.success(request, f"{convite.jogador.username} foi adicionado ao time {time.nome}.")
+        return redirect('editar_competicao', id=convite.competicao.id)
+
+    messages.error(request, "Requisição inválida.")
+    return redirect('editar_competicao', id=convite.competicao.id)
+
+@login_required
+def recusar_convite_competicao(request, convite_id):
+    convite = get_object_or_404(ConviteCompeticao, id=convite_id, competicao__gerente=request.user)
+    convite.status = 'recusado'
+    convite.save()
+    messages.info(request, f"Convite de {convite.jogador.username} recusado.")
+    return redirect('editar_competicao', id=convite.competicao.id)

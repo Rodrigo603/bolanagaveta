@@ -3,7 +3,16 @@
 
 {% block title %}Home - Bola na Gaveta{% endblock %}
 
-{% block content %}
+{% block content %}  
+  <div class="card mb-4">
+  <div class="card-body text-center">
+    <h2 class="card-title">Meu Perfil</h2>
+    <p>Acompanhe seus dados de desempenho geral como jogador.</p>
+    <a href="{% url 'meu_perfil' %}" class="btn btn-primary btn-lg">
+      <i class="fas fa-user"></i> Ver Meu Perfil e Estatísticas
+    </a>
+  </div>
+  </div>
   <div class="card mb-4">
     <div class="card-body text-center">
       <h2 class="card-title">Convites</h2>
@@ -13,13 +22,14 @@
       </a>
     </div>
   </div>
-  
+
+
   <div class="card mb-4">
   <div class="card-body text-center">
-    <h2 class="card-title">Meu Perfil</h2>
-    <p>Acompanhe seus dados de desempenho geral como jogador.</p>
-    <a href="{% url 'meu_perfil' %}" class="btn btn-primary btn-lg">
-      <i class="fas fa-user"></i> Ver Meu Perfil e Estatísticas
+    <h2 class="card-title">Buscar Competições Perto</h2>
+    <p>Encontre competições próximas com base no seu endereço ou localização.</p>
+    <a href="{% url 'buscar_eventos_perto' %}" class="btn btn-warning btn-lg">
+      <i class="fas fa-map-marker-alt"></i> Buscar Perto de Mim
     </a>
   </div>
   </div>

@@ -6,6 +6,7 @@ from .views import convidar_jogador, convites_jogador,aceitar_convite, recusar_c
 from .views import gerenciar_partidas, adicionar_partida, editar_partida, excluir_partida
 from .views import alternar_finalizacao_partida, historico_partidas_competicao, editar_estatisticas_partida, tabela_classificacao
 from .views import tabela_classificacao_jogador, competicao_jogador_detalhes, historico_partidas_competicao, ranking_jogadores, meu_perfil
+from .views import buscar_eventos_perto, auto_convite_competicao, aceitar_convite_interface, recusar_convite_competicao
 
 urlpatterns = [
     path("", index_view, name="index"), 
@@ -16,6 +17,8 @@ urlpatterns = [
     path("competicoes/", lista_competicoes,name= "lista_competicoes"),
     path("competicoes/editar<int:id>/editar",editar_competicao,name="editar_competicao"),
     path("competicoes/excluir<int:id>/excluir",excluir_competicao,name="excluir_competicao"),
+    path('convite/<int:convite_id>/aceitar_interface/', aceitar_convite_interface, name='aceitar_convite_interface'),
+    path('convite/<int:convite_id>/recusar/', recusar_convite_competicao, name='recusar_convite_competicao'),
 
 
     path('competicao/<int:competicao_id>/editar_times/', editar_times, name='editar_times'),
@@ -35,6 +38,11 @@ urlpatterns = [
     path('jogador/classificacoes/', tabela_classificacao_jogador, name='tabela_classificacao_jogador'),
     path('jogador/competicao/<int:competicao_id>/historico/', historico_partidas_competicao, name='historico_partidas_competicao'),
     path('competicao/<int:competicao_id>/ranking/', ranking_jogadores, name='ranking_jogadores'),
+    ##Busca
+    path('buscar_eventos_perto/', buscar_eventos_perto, name='buscar_eventos_perto'),
+    path('competicao/<int:competicao_id>/auto_convite/', auto_convite_competicao, name='auto_convite_competicao'),
+
+
     
     # URLs para gerenciar partidas
     path('competicao/<int:competicao_id>/partidas/', gerenciar_partidas, name='gerenciar_partidas'),
