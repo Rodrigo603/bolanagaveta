@@ -359,14 +359,14 @@ def adicionar_partida(request, competicao_id):
         data = request.POST.get('data')
         hora = request.POST.get('hora')
         
-        # Validar dados
+    
         if time_casa_id and time_visitante_id and data and hora:
-            # Verificar se os times são diferentes
+
             if time_casa_id != time_visitante_id:
                 time_casa = get_object_or_404(Time, id=time_casa_id)
                 time_visitante = get_object_or_404(Time, id=time_visitante_id)
                 
-                # Criar a partida
+
                 Partida.objects.create(
                     competicao=competicao,
                     time_casa=time_casa,
@@ -377,7 +377,7 @@ def adicionar_partida(request, competicao_id):
                 
                 return redirect('gerenciar_partidas', competicao_id=competicao.id)
     
-    # Redirecionar para a página de gerenciamento de partidas
+
     return redirect('gerenciar_partidas', competicao_id=competicao.id)
 
 @login_required
@@ -385,8 +385,7 @@ def editar_partida(request, partida_id):
     """View para editar uma partida existente"""
     partida = get_object_or_404(Partida, id=partida_id)
     competicao = partida.competicao
-    
-    # Verificar se o usuário é gerenciador
+
     if request.user.perfil.tipo_usuario != 'gerenciador':
         return redirect('pagina_jogador')
     
@@ -399,7 +398,7 @@ def editar_partida(request, partida_id):
         data = request.POST.get('data')
         hora = request.POST.get('hora')
         
-        # Validar dados
+
         if time_casa_id and time_visitante_id and data and hora:
             # Verificar se os times são diferentes
             if time_casa_id != time_visitante_id:
@@ -513,7 +512,6 @@ def editar_estatisticas_partida(request, partida_id):
         gols_time_casa = int(request.POST.get("gols_time_casa", 0))
         gols_time_visitante = int(request.POST.get("gols_time_visitante", 0))
 
-        # Limpa estatísticas anteriores
         Gol.objects.filter(partida=partida).delete()
         Assistencia.objects.filter(partida=partida).delete()
         Cartao.objects.filter(partida=partida).delete()
@@ -549,8 +547,6 @@ def editar_estatisticas_partida(request, partida_id):
                 'jogadores_time_visitante': jogadores_time_visitante,
             })
 
-        # Agora validar assistências:
-        # Para time da casa
         gols_gerais_casa = sum(gols_por_jogador[j.id] for j in jogadores_time_casa)
         gols_por_jogador_casa = {j.id: gols_por_jogador[j.id] for j in jogadores_time_casa}
         
@@ -629,7 +625,7 @@ def editar_estatisticas_partida(request, partida_id):
         'jogadores_time_casa': jogadores_time_casa,
         'jogadores_time_visitante': jogadores_time_visitante,
         'todos_jogadores': todos_jogadores,
-        'premios': premios,  # ✅ isso aqui estava faltando
+        'premios': premios,
     })
 
 from django.db.models import Count, Q
@@ -892,17 +888,26 @@ def meu_perfil(request):
     # Estatísticas por competição
     competicoes = set(time.competicao for time in request.user.time_set.all())
 
+    mvps = ternos = paredoes = xerifes = cones = 0  # ✅ inicialização segura
     estatisticas_por_competicao = []
+
     for comp in competicoes:
         gols = Gol.objects.filter(partida__competicao=comp, jogador=request.user).count()
         assistencias = Assistencia.objects.filter(partida__competicao=comp, jogador=request.user).count()
         amarelos = Cartao.objects.filter(partida__competicao=comp, jogador=request.user, tipo='amarelo').count()
         vermelhos = Cartao.objects.filter(partida__competicao=comp, jogador=request.user, tipo='vermelho').count()
-        mvps = Partida.objects.filter(mvp=request.user).count()
-        ternos = Partida.objects.filter(joga_de_terno=request.user).count()
-        paredoes = Partida.objects.filter(paredao=request.user).count()
-        xerifes = Partida.objects.filter(xerife=request.user).count()
-        cones = Partida.objects.filter(cone=request.user).count()
+
+        mvps_comp = Partida.objects.filter(competicao=comp, mvp=request.user).count()
+        ternos_comp = Partida.objects.filter(competicao=comp, joga_de_terno=request.user).count()
+        paredoes_comp = Partida.objects.filter(competicao=comp, paredao=request.user).count()
+        xerifes_comp = Partida.objects.filter(competicao=comp, xerife=request.user).count()
+        cones_comp = Partida.objects.filter(competicao=comp, cone=request.user).count()
+
+        mvps += mvps_comp
+        ternos += ternos_comp
+        paredoes += paredoes_comp
+        xerifes += xerifes_comp
+        cones += cones_comp
 
         estatisticas_por_competicao.append({
             'competicao': comp,
@@ -910,12 +915,11 @@ def meu_perfil(request):
             'assistencias': assistencias,
             'amarelos': amarelos,
             'vermelhos': vermelhos,
-            'total_mvps': mvps,
-            'total_ternos': ternos,
-            'total_paredoes': paredoes,
-            'total_xerifes': xerifes,
-            'total_cones': cones,
-            
+            'total_mvps': mvps_comp,
+            'total_ternos': ternos_comp,
+            'total_paredoes': paredoes_comp,
+            'total_xerifes': xerifes_comp,
+            'total_cones': cones_comp,
         })
 
     return render(request, 'meu_perfil.html', {
@@ -931,6 +935,7 @@ def meu_perfil(request):
         'total_cones': cones,
         'estatisticas_por_competicao': estatisticas_por_competicao,
     })
+
 
 
 
