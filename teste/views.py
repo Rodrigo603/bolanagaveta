@@ -593,11 +593,6 @@ def editar_estatisticas_partida(request, partida_id):
         # Tudo certo: salvar estatísticas
         partida.gols_time_casa = gols_time_casa
         partida.gols_time_visitante = gols_time_visitante
-        partida.mvp = User.objects.filter(id=request.POST.get("mvp")).first()
-        partida.joga_de_terno = User.objects.filter(id=request.POST.get("joga_de_terno")).first()
-        partida.paredao = User.objects.filter(id=request.POST.get("paredao")).first()
-        partida.xerife = User.objects.filter(id=request.POST.get("xerife")).first()
-        partida.cone = User.objects.filter(id=request.POST.get("cone")).first()
         partida.finalizada = True
         partida.save()
 
@@ -638,6 +633,43 @@ def editar_estatisticas_partida(request, partida_id):
     })
 
 from django.db.models import Count, Q
+
+@login_required
+def atribuir_premios(request, partida_id):
+    partida = get_object_or_404(Partida, id=partida_id)
+
+    if request.user.perfil.tipo_usuario != 'gerenciador':
+        return redirect('pagina_jogador')
+
+    todos_jogadores = list(partida.time_casa.jogadores.all()) + list(partida.time_visitante.jogadores.all())
+
+    if request.method == "POST":
+        partida.mvp = User.objects.filter(id=request.POST.get("mvp")).first()
+        partida.joga_de_terno = User.objects.filter(id=request.POST.get("joga_de_terno")).first()
+        partida.paredao = User.objects.filter(id=request.POST.get("paredao")).first()
+        partida.xerife = User.objects.filter(id=request.POST.get("xerife")).first()
+        partida.cone = User.objects.filter(id=request.POST.get("cone")).first()
+        partida.save()
+
+        messages.success(request, "Prêmios atualizados com sucesso!")
+        return redirect('editar_estatisticas_partida', partida_id=partida.id)
+
+    return render(request, 'atribuir_premios.html', {
+        'partida': partida,
+        'todos_jogadores': todos_jogadores,
+        'premios': [
+            ("MVP da Partida", "mvp"),
+            ("Joga de Terno", "joga_de_terno"),
+            ("Paredão", "paredao"),
+            ("Xerife", "xerife"),
+            ("Cone do Jogo", "cone"),
+        ],
+        'mvp_id': partida.mvp.id if partida.mvp else "",
+        'joga_de_terno_id': partida.joga_de_terno.id if partida.joga_de_terno else "",
+        'paredao_id': partida.paredao.id if partida.paredao else "",
+        'xerife_id': partida.xerife.id if partida.xerife else "",
+        'cone_id': partida.cone.id if partida.cone else "",
+    })
 
 
 @login_required

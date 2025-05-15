@@ -4,7 +4,7 @@ from .views import lista_competicoes, editar_competicao, excluir_competicao, edi
 from .views import pagina_jogador, adicionar_time, editar_time, excluir_time
 from .views import convidar_jogador, convites_jogador,aceitar_convite, recusar_convite, remover_jogador_time 
 from .views import gerenciar_partidas, adicionar_partida, editar_partida, excluir_partida
-from .views import alternar_finalizacao_partida, historico_partidas_competicao, editar_estatisticas_partida, tabela_classificacao
+from .views import alternar_finalizacao_partida, historico_partidas_competicao, editar_estatisticas_partida, tabela_classificacao, atribuir_premios
 from .views import tabela_classificacao_jogador, competicao_jogador_detalhes, historico_partidas_competicao, ranking_jogadores, meu_perfil
 from .views import buscar_eventos_perto, auto_convite_competicao, aceitar_convite_interface, recusar_convite_competicao
 
@@ -52,4 +52,5 @@ urlpatterns = [
     path('partida/<int:partida_id>/excluir/', excluir_partida, name='excluir_partida'),
     path('partida/<int:partida_id>/alternar_finalizacao/', alternar_finalizacao_partida, name='alternar_finalizacao_partida'),
     path('partida/<int:partida_id>/estatisticas/', editar_estatisticas_partida, name='editar_estatisticas_partida'),
+    path('partida/<int:partida_id>/premios/', atribuir_premios, name='atribuir_premios'),
 ]
