@@ -10,25 +10,6 @@ Cypress.Commands.add('deleteUsers', () => {
 });
 
 
-Cypress.Commands.add('signinJogador', () => {
-    cy.visit('/');
-    cy.get('.nav-links > :nth-child(1) > a').click();
-    cy.get('#tipo_usuario');
-    cy.get('select[name="tipo_usuario"]').select('Jogador');
-    cy.get('#username').type('teste jogador');
-    cy.get('#email').type('jogador@email.com');
-    cy.get('#password1').type('12345');
-    cy.get('#password2').type('12345');
-    cy.get('.btn').click();
-});
-
-
-Cypress.Commands.add('loginJogador', () => {
-    cy.get('#username').type('teste jogador');
-    cy.get('#password').type('12345');
-    cy.get('.btn').click();
-  });
-
 Cypress.Commands.add('deleteCompeticoes', () => {
     return cy.exec('python delete_competicoes.py', { failOnNonZeroExit: false }).then((result) => {
       console.log(result.stdout);
@@ -216,7 +197,7 @@ Cypress.Commands.add('registrarDados', () => {
 
 
 Cypress.Commands.add('informacoesPerfil', () => {
-    cy.get(':nth-child(2) > .card-body > .btn').click();
+    cy.get(':nth-child(1) > .card-body > .btn').click();
     cy.get('#posicao');
     cy.get('select[name="posicao"]').select('Atacante');
     cy.get('.row > :nth-child(2) > .form-control').type('34');

@@ -26,17 +26,12 @@
   <script>
   function pegarLocalizacao() {
     const raio = document.getElementById('raio').value;
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        window.location.href = `{% url 'buscar_eventos_perto' %}?lat=${lat}&lon=${lon}&raio=${raio}`;
-      });
-    } else {
-      alert("Seu navegador não suporta geolocalização.");
-    }
+    const lat = -8.03625;
+    const lon = -34.88941;
+    window.location.href = `{% url 'buscar_eventos_perto' %}?lat=${lat}&lon=${lon}&raio=${raio}`;
   }
-  </script>
+</script>
+
 
   {% if eventos %}
     <div class="row">
