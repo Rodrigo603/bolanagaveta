@@ -1,10 +1,13 @@
 {% extends "base.html" %}
 {% block title %}Ranking - {{ competicao.nome }}{% endblock %}
+
 {% block content %}
 <h2><i class="fas fa-chart-bar"></i> Ranking - {{ competicao.nome }}</h2>
 
+<!-- Filtro de Desempenho -->
 <form method="get" class="mb-3">
-  <label for="filtro" class="me-2"><strong>Ordenar por:</strong></label>
+  <input type="hidden" name="filtro_premios" value="{{ filtro_premios }}">
+  <label for="filtro" class="me-2"><strong>Ordenar desempenho por:</strong></label>
   <select name="filtro" id="filtro" class="form-select w-auto d-inline" onchange="this.form.submit()">
     <option value="gols" {% if filtro == 'gols' %}selected{% endif %}>Gols</option>
     <option value="assistencias" {% if filtro == 'assistencias' %}selected{% endif %}>Assistências</option>
@@ -13,6 +16,8 @@
   </select>
 </form>
 
+<!-- Tabela: Desempenho -->
+<h3 class="mt-3">⚽ Desempenho Geral</h3>
 <table class="table table-bordered table-sm">
   <thead>
     <tr>
@@ -32,6 +37,48 @@
       <td>{{ linha.amarelos }}</td>
       <td>{{ linha.vermelhos }}</td>
     </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- Filtro de Premiações -->
+<form method="get" class="mb-3 mt-5">
+  <input type="hidden" name="filtro" value="{{ filtro }}">
+  <label for="filtro_premios" class="me-2"><strong>Ordenar prêmios por:</strong></label>
+  <select name="filtro_premios" id="filtro_premios" class="form-select w-auto d-inline" onchange="this.form.submit()">
+    <option value="mvps" {% if filtro_premios == 'mvps' %}selected{% endif %}>MVP</option>
+    <option value="ternos" {% if filtro_premios == 'ternos' %}selected{% endif %}>Joga de Terno</option>
+    <option value="paredoes" {% if filtro_premios == 'paredoes' %}selected{% endif %}>Paredão</option>
+    <option value="xerifes" {% if filtro_premios == 'xerifes' %}selected{% endif %}>Xerife</option>
+    <option value="cones" {% if filtro_premios == 'cones' %}selected{% endif %}>Cone do Jogo</option>
+  </select>
+</form>
+
+<!-- Tabela: Premiações -->
+<h3 class="mt-3">🏆 Premiações Individuais</h3>
+<table class="table table-bordered table-sm">
+  <thead class="table-success">
+    <tr>
+      <th>Jogador</th>
+      <th>🏅 MVP</th>
+      <th>🎩 Joga de Terno</th>
+      <th>🧤 Paredão</th>
+      <th>🛡️ Xerife</th>
+      <th>🛑 Cone</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for linha in ranking %}
+    {% if linha.mvps or linha.ternos or linha.paredoes or linha.xerifes or linha.cones %}
+    <tr>
+      <td>{{ linha.jogador.username }}</td>
+      <td>{{ linha.mvps }}</td>
+      <td>{{ linha.ternos }}</td>
+      <td>{{ linha.paredoes }}</td>
+      <td>{{ linha.xerifes }}</td>
+      <td>{{ linha.cones }}</td>
+    </tr>
+    {% endif %}
     {% endfor %}
   </tbody>
 </table>

@@ -63,6 +63,23 @@
         </tbody>
     </table>
 
+    <hr>
+    <h4 class="mt-4">🏆 Prêmios Individuais</h4>
+
+    <div class="row">
+        {% for label, campo in premios %}
+            <div class="col-md-6 mb-3">
+                <label for="{{ campo }}" class="form-label">{{ label }}</label>
+                <select name="{{ campo }}" class="form-control" required>
+                    <option value="">-- Escolher Jogador --</option>
+                    {% for jogador in todos_jogadores %}
+                        <option value="{{ jogador.id }}">{{ jogador.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% endfor %}
+    </div>
+
     <div class="mt-3">
         <a href="{% url 'gerenciar_partidas' partida.competicao.id %}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Voltar

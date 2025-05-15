@@ -593,6 +593,11 @@ def editar_estatisticas_partida(request, partida_id):
         # Tudo certo: salvar estatísticas
         partida.gols_time_casa = gols_time_casa
         partida.gols_time_visitante = gols_time_visitante
+        partida.mvp = User.objects.filter(id=request.POST.get("mvp")).first()
+        partida.joga_de_terno = User.objects.filter(id=request.POST.get("joga_de_terno")).first()
+        partida.paredao = User.objects.filter(id=request.POST.get("paredao")).first()
+        partida.xerife = User.objects.filter(id=request.POST.get("xerife")).first()
+        partida.cone = User.objects.filter(id=request.POST.get("cone")).first()
         partida.finalizada = True
         partida.save()
 
@@ -614,10 +619,22 @@ def editar_estatisticas_partida(request, partida_id):
         messages.success(request, "Estatísticas da partida atualizadas com sucesso!")
         return redirect('gerenciar_partidas', competicao_id=partida.competicao.id)
 
+    todos_jogadores = list(jogadores_time_casa) + list(jogadores_time_visitante)
+
+    premios = [
+    ("MVP da Partida", "mvp"),
+    ("Joga de Terno", "joga_de_terno"),
+    ("Paredão", "paredao"),
+    ("Xerife", "xerife"),
+    ("Cone do Jogo", "cone")
+    ]
+
     return render(request, 'editar_estatisticas_partida.html', {
         'partida': partida,
         'jogadores_time_casa': jogadores_time_casa,
         'jogadores_time_visitante': jogadores_time_visitante,
+        'todos_jogadores': todos_jogadores,
+        'premios': premios,  # ✅ isso aqui estava faltando
     })
 
 from django.db.models import Count, Q
@@ -628,17 +645,30 @@ def ranking_jogadores(request, competicao_id):
     competicao = get_object_or_404(Competicao, id=competicao_id)
     jogadores = User.objects.filter(time__competicao=competicao).distinct()
 
-    # Coleta os dados
+    # Coleta estatísticas
     gols = Gol.objects.filter(partida__competicao=competicao).values('jogador').annotate(total=Count('id'))
     assistencias = Assistencia.objects.filter(partida__competicao=competicao).values('jogador').annotate(total=Count('id'))
     amarelos = Cartao.objects.filter(partida__competicao=competicao, tipo='amarelo').values('jogador').annotate(total=Count('id'))
     vermelhos = Cartao.objects.filter(partida__competicao=competicao, tipo='vermelho').values('jogador').annotate(total=Count('id'))
 
+    mvps = Partida.objects.filter(competicao=competicao, mvp__isnull=False).values('mvp').annotate(total=Count('id'))
+    ternos = Partida.objects.filter(competicao=competicao, joga_de_terno__isnull=False).values('joga_de_terno').annotate(total=Count('id'))
+    paredoes = Partida.objects.filter(competicao=competicao, paredao__isnull=False).values('paredao').annotate(total=Count('id'))
+    xerifes = Partida.objects.filter(competicao=competicao, xerife__isnull=False).values('xerife').annotate(total=Count('id'))
+    cones = Partida.objects.filter(competicao=competicao, cone__isnull=False).values('cone').annotate(total=Count('id'))
+
+    # Mapeia resultados
     mapa_gols = {x['jogador']: x['total'] for x in gols}
     mapa_assistencias = {x['jogador']: x['total'] for x in assistencias}
     mapa_amarelos = {x['jogador']: x['total'] for x in amarelos}
     mapa_vermelhos = {x['jogador']: x['total'] for x in vermelhos}
+    mapa_mvps = {x['mvp']: x['total'] for x in mvps}
+    mapa_ternos = {x['joga_de_terno']: x['total'] for x in ternos}
+    mapa_paredoes = {x['paredao']: x['total'] for x in paredoes}
+    mapa_xerifes = {x['xerife']: x['total'] for x in xerifes}
+    mapa_cones = {x['cone']: x['total'] for x in cones}
 
+    # Monta ranking
     ranking = []
     for jogador in jogadores:
         ranking.append({
@@ -647,11 +677,15 @@ def ranking_jogadores(request, competicao_id):
             'assistencias': mapa_assistencias.get(jogador.id, 0),
             'amarelos': mapa_amarelos.get(jogador.id, 0),
             'vermelhos': mapa_vermelhos.get(jogador.id, 0),
+            'mvps': mapa_mvps.get(jogador.id, 0),
+            'ternos': mapa_ternos.get(jogador.id, 0),
+            'paredoes': mapa_paredoes.get(jogador.id, 0),
+            'xerifes': mapa_xerifes.get(jogador.id, 0),
+            'cones': mapa_cones.get(jogador.id, 0),
         })
 
-    # Filtro
+    # Filtro de desempenho
     filtro = request.GET.get("filtro", "gols")
-
     if filtro == "assistencias":
         ranking = sorted(ranking, key=lambda x: -x['assistencias'])
     elif filtro == "amarelos":
@@ -661,12 +695,25 @@ def ranking_jogadores(request, competicao_id):
     else:
         ranking = sorted(ranking, key=lambda x: -x['gols'])
 
+    # Filtro de premiações
+    filtro_premios = request.GET.get("filtro_premios", "mvps")
+    if filtro_premios == "ternos":
+        ranking = sorted(ranking, key=lambda x: -x['ternos'])
+    elif filtro_premios == "paredoes":
+        ranking = sorted(ranking, key=lambda x: -x['paredoes'])
+    elif filtro_premios == "xerifes":
+        ranking = sorted(ranking, key=lambda x: -x['xerifes'])
+    elif filtro_premios == "cones":
+        ranking = sorted(ranking, key=lambda x: -x['cones'])
+    else:
+        ranking = sorted(ranking, key=lambda x: -x['mvps'])
+
     return render(request, 'ranking_jogadores.html', {
         'competicao': competicao,
         'ranking': ranking,
-        'filtro': filtro
+        'filtro': filtro,
+        'filtro_premios': filtro_premios,
     })
-
 
 #Tabela de Classificação
 
@@ -819,13 +866,24 @@ def meu_perfil(request):
         assistencias = Assistencia.objects.filter(partida__competicao=comp, jogador=request.user).count()
         amarelos = Cartao.objects.filter(partida__competicao=comp, jogador=request.user, tipo='amarelo').count()
         vermelhos = Cartao.objects.filter(partida__competicao=comp, jogador=request.user, tipo='vermelho').count()
+        mvps = Partida.objects.filter(mvp=request.user).count()
+        ternos = Partida.objects.filter(joga_de_terno=request.user).count()
+        paredoes = Partida.objects.filter(paredao=request.user).count()
+        xerifes = Partida.objects.filter(xerife=request.user).count()
+        cones = Partida.objects.filter(cone=request.user).count()
 
         estatisticas_por_competicao.append({
             'competicao': comp,
             'gols': gols,
             'assistencias': assistencias,
             'amarelos': amarelos,
-            'vermelhos': vermelhos
+            'vermelhos': vermelhos,
+            'total_mvps': mvps,
+            'total_ternos': ternos,
+            'total_paredoes': paredoes,
+            'total_xerifes': xerifes,
+            'total_cones': cones,
+            
         })
 
     return render(request, 'meu_perfil.html', {
@@ -833,7 +891,12 @@ def meu_perfil(request):
         'total_gols': total_gols,
         'total_assistencias': total_assistencias,
         'cartoes_amarelos': total_amarelos,
-        'cartoes_vermelhos': total_vermelhos,
+        'cartoes_vermelhos': total_vermelhos,    
+        'total_mvps': mvps,
+        'total_ternos': ternos,
+        'total_paredoes': paredoes,
+        'total_xerifes': xerifes,
+        'total_cones': cones,
         'estatisticas_por_competicao': estatisticas_por_competicao,
     })
 

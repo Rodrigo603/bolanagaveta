@@ -86,6 +86,43 @@
   </div>
 </div>
 
+<div class="card mb-4">
+  <div class="card-body">
+    <h4 class="card-title mb-4 text-center">
+      <i class="fas fa-trophy text-warning"></i> Prêmios Individuais Totais
+    </h4>
+
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 3rem; flex-wrap: nowrap; overflow-x: auto;">
+
+      <div style="display: flex; align-items: center; font-size: 1.2rem;">
+        <i class="fas fa-medal text-warning me-2" style="font-size: 1.6rem;"></i>
+        <strong>MVP: {{ total_mvps }}</strong>
+      </div>
+
+      <div style="display: flex; align-items: center; font-size: 1.2rem;">
+        <i class="fas fa-user-tie text-primary me-2" style="font-size: 1.6rem;"></i>
+        <strong>Joga de Terno: {{ total_ternos }}</strong>
+      </div>
+
+      <div style="display: flex; align-items: center; font-size: 1.2rem;">
+        <i class="fas fa-shield-alt text-info me-2" style="font-size: 1.6rem;"></i>
+        <strong>Paredão: {{ total_paredoes }}</strong>
+      </div>
+
+      <div style="display: flex; align-items: center; font-size: 1.2rem;">
+        <i class="fas fa-user-shield text-secondary me-2" style="font-size: 1.6rem;"></i>
+        <strong>Xerife: {{ total_xerifes }}</strong>
+      </div>
+
+      <div style="display: flex; align-items: center; font-size: 1.2rem;">
+        <i class="fas fa-traffic-cone text-danger me-2" style="font-size: 1.6rem;"></i>
+        <strong>Cone do Jogo: {{ total_cones }}</strong>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 
 
 

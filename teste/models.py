@@ -65,6 +65,12 @@ class Partida(models.Model):
     gols_time_visitante = models.PositiveIntegerField(default=0)
     finalizada = models.BooleanField(default=False)
     
+    mvp = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='mvps')
+    joga_de_terno = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='premios_terno')
+    paredao = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='premios_paredao')
+    xerife = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='premios_xerife')
+    cone = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='premios_cone')
+
     def __str__(self):
         return f"{self.time_casa.nome} vs {self.time_visitante.nome} - {self.data}"
     def vencedor(self):
