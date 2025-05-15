@@ -260,7 +260,7 @@ describe('Perfil do jogador', () => {
               cy.visit('/');
     });
 });
-    it('Cenario 1: Visualização bem sucedida dos titulos', () => {
+    it('Cenario 1: Visualização bem sucedida dos titulos pelo perfil', () => {
         cy.signinJogador();
         cy.loginJogador();
         cy.get(':nth-child(3) > a').click();
@@ -294,8 +294,44 @@ describe('Perfil do jogador', () => {
         cy.wait(1500);
     });
     
+
+    it('Cenario 2: Visualização dos titulos pela competição', () => {
+        cy.signinJogador();
+        cy.loginJogador();
+        cy.get(':nth-child(3) > a').click();
+        cy.signinJogador2();
+        cy.loginJogador2();
+        cy.get(':nth-child(3) > a').click();
+        cy.signinGerenciador();
+        cy.loginGerenciador();
+        cy.criarCompeticao();
+        cy.get('.card-actions > a.btn').click();
+        cy.criarTime();
+        cy.criarTime2();
+        cy.convidarJogador();
+        cy.convidarJogador2();
+        cy.get(':nth-child(3) > a').click();
+        cy.loginJogador();
+        cy.aceitarConvite();
+        cy.get(':nth-child(3) > a').click();
+        cy.loginJogador2();
+        cy.aceitarConvite();
+        cy.get(':nth-child(3) > a').click();
+        cy.loginGerenciador();
+        cy.get('.card-actions > a.btn').click();
+        cy.criarPartida();
+        cy.titulosJogadores();
+        cy.registrarDados();
+        cy.get('[data-cy="btn-voltar"]').click();
+        cy.get(':nth-child(3) > a').click();
+        cy.loginJogador();
+        cy.get(':nth-child(4) > .btn').click();
+        cy.get('.btn-outline-dark').click();
+        cy.wait(1500);
+    });
     
-    it('Cenario 2: Visualização dos titulos sem ter partidas jogadas', () => {
+    
+    it('Cenario 3: Visualização dos titulos sem ter partidas jogadas', () => {
         cy.signinJogador();
         cy.loginJogador();
         cy.informacoesPerfil();

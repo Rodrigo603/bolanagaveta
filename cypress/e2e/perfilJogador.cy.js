@@ -249,7 +249,7 @@ describe('Perfil do jogador', () => {
               cy.visit('/');
     });
 });
-    it('Cenario 1: Visualização bem sucedida', () => {
+    it('Cenario 1: Visualização bem sucedida do perfil', () => {
         cy.signinJogador();
         cy.loginJogador();
         cy.get(':nth-child(3) > a').click();
@@ -281,6 +281,8 @@ describe('Perfil do jogador', () => {
         cy.informacoesPerfil();
         cy.wait(1000);
     });
+    
+    
     it('Cenario 2: Visualização do perfil sem estar em competição', () => {
         cy.signinJogador();
         cy.loginJogador();
