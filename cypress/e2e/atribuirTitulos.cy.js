@@ -291,7 +291,7 @@ describe('Perfil do jogador', () => {
         cy.get(':nth-child(3) > a').click();
         cy.loginJogador();
         cy.informacoesPerfil();
-        cy.wait(1500);
+        cy.wait(2000);
     });
     
 

@@ -118,7 +118,7 @@ describe('Visualização de competições perto do jogador', () => {
         cy.loginJogador();
         cy.get(':nth-child(3) > .card-body > .btn').click();
         cy.get('.btn').click();
-        cy.wait(1000);
+        cy.wait(2000);
     }); 
     
     it('Cenario 2: Visualizção sem competições por perto', () => {

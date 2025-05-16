@@ -181,7 +181,6 @@ Cypress.Commands.add('editarPartida', () => {
   
 
 Cypress.Commands.add('registrarDados', () => {
-    cy.get('.btn-success').click();
     cy.get('form > :nth-child(2) > .form-control').type('3');
     cy.get('form > :nth-child(3) > .form-control').type('2');
     cy.get(':nth-child(5) > tbody > tr > :nth-child(2) > .form-control').type('3');
@@ -236,6 +235,20 @@ Cypress.Commands.add('aceitarConvite', () => {
 
 });
 
+
+Cypress.Commands.add('titulosJogadores', () => {
+    cy.get('.btn-success').click();
+    cy.get('.btn-warning').click();
+    cy.get(':nth-child(1) > .form-control');
+    cy.get('select[name="mvp"]').select('teste jogador');
+    cy.get('select[name="joga_de_terno"]').select('teste jogador2');
+    cy.get('select[name="paredao"]').select('teste jogador');
+    cy.get('select[name="xerife"]').select('teste jogador2');
+    cy.get('select[name="cone"]').select('teste jogador');
+    cy.get('.btn-primary').click();
+
+});
+
   
 describe('Perfil do jogador', () => {
 
@@ -249,7 +262,7 @@ describe('Perfil do jogador', () => {
               cy.visit('/');
     });
 });
-    it('Cenario 1: Visualização bem sucedida do perfil', () => {
+    it('Cenario 1: Visualização bem sucedida do perfil e estatisticas', () => {
         cy.signinJogador();
         cy.loginJogador();
         cy.get(':nth-child(3) > a').click();
@@ -274,12 +287,13 @@ describe('Perfil do jogador', () => {
         cy.loginGerenciador();
         cy.get('.card-actions > a.btn').click();
         cy.criarPartida();
+        cy.titulosJogadores();
         cy.registrarDados();
         cy.get('[data-cy="btn-voltar"]').click();
         cy.get(':nth-child(3) > a').click();
         cy.loginJogador();
         cy.informacoesPerfil();
-        cy.wait(1000);
+        cy.wait(2000);
     });
     
     
