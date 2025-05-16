@@ -121,6 +121,7 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
   
 </details>
 
+
 <details>
   <summary>✅Entrega 04</summary>
   
@@ -141,4 +142,14 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
 
   Quadro Jira
   ![Quadro3](images/quadro4.png)
-  
+
+  ## Bugtracker
+
+  Open
+  ![BugtrackerOpen](images\bugtrackerOpen2.png)
+
+  Closed
+  ![BugtrackerClosed](images\bugtrackerClosed2.png)
+
+  ## Relatorio em Par
+
