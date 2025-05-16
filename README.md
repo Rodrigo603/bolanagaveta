@@ -84,7 +84,6 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
    ![Quadro jira](images/QuadroJira2.jpg)
 </details>
 
-
 <details>
   <summary>✅Entrega 03</summary>
   
@@ -121,3 +120,25 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
 
   
 </details>
+
+<details>
+  <summary>✅Entrega 04</summary>
+  
+  ## Screencasts
+  
+  [Testes Automatizados]()
+
+  [CI/CD]()
+
+  [Figma]()
+
+  [Deploy]()
+
+  ## Jira
+
+  Blacklog Jira
+  ![BackLog Jira 3](images/backlog4.png)
+
+  Quadro Jira
+  ![Quadro3](images/quadro4.png)
+  
