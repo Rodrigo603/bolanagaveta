@@ -45,16 +45,20 @@ Cypress.Commands.add('criarCompeticao', () => {
     cy.get('.card > .btn').click();
     cy.get('#nome').type('Competicao Cypress');
     cy.get('#numero_de_times').type('4');
-    cy.get('#local').type('Recife');
-    cy.get('button.btn').click();
+    cy.get('#endereco_descritivo').type('Rua Dr. Enéas de Lucena 120,Rosarinho - Recife/PE');
+    cy.get('.btn-sm').click();
+    cy.get('.form-actions > button.btn').click();
+    cy.get('#latitude').type('-8.0331457');
+    cy.get('#longitude').type('-34.8950922');
+    cy.get('.form-actions > button.btn').click();
 });
 
 
 Cypress.Commands.add('criarCompeticaoIncompleta', () => {
     cy.get('.card > .btn').click();
     cy.get('#numero_de_times').type('4');
-    cy.get('#local').type('Recife');
-    cy.get('button.btn').click();
+    cy.get('#endereco_descritivo').type('Estrada de Belem 272,Encruzilhada - Recife/PE');
+    cy.get('.form-actions > button.btn').click();
 });
 
 
@@ -69,9 +73,13 @@ Cypress.Commands.add('editarCompeticao', () => {
     cy.get('#nome').type('Edição Cypress');
     cy.get('#numero_de_times').clear();
     cy.get('#numero_de_times').type('6');
-    cy.get('#local').clear();
-    cy.get('#local').type('Olinda');
-    cy.get('button.btn').click();
+    cy.get('#endereco_descritivo').clear();
+    cy.get('#endereco_descritivo').type('Estrada de Belem 272,Encruzilhada - Recife/PE');
+    cy.get('#latitude').clear();
+    cy.get('#latitude').type('-8.03625');
+    cy.get('#longitude').clear();
+    cy.get('#longitude').type('-34.88941');
+    cy.get('.btn-primary').click();
 
 });
 
