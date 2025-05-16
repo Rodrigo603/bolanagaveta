@@ -127,9 +127,9 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
   
   ## Screencasts
   
-  [Testes Automatizados]()
+  [Testes Automatizados](https://youtu.be/OA52EeXvLRk)
 
-  [CI/CD]()
+  [CI/CD](https://youtu.be/lcgfo2VPgJI)
 
   [Figma]()
 
