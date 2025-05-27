@@ -133,7 +133,7 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
 
   [Figma]()
 
-  [Deploy]()
+  [Deploy](https://www.youtube.com/watch?v=u9F4nsc9A2g&list=PLBgQ_k9pFMTSjSUjmhsSVIZ__GVrn7C3A&index=5)
 
   ## Jira
 
