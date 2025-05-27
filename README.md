@@ -131,7 +131,7 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
 
   [CI/CD](https://youtu.be/lcgfo2VPgJI)
 
-  [Figma]()
+  [Figma](https://www.youtube.com/watch?v=gg6ajNznB1Q&list=PLBgQ_k9pFMTSjSUjmhsSVIZ__GVrn7C3A&index=6)
 
   [Deploy](https://www.youtube.com/watch?v=u9F4nsc9A2g&list=PLBgQ_k9pFMTSjSUjmhsSVIZ__GVrn7C3A&index=5)
 
