@@ -153,3 +153,6 @@ Este é um sistema web desenvolvido em **Django**, projetado para facilitar a or
 
   ## Relatorio em Par
 
+  [Relatorio em par](https://docs.google.com/document/d/1VDtgrqVjuDC7AajdQb2aGRrdOP06M_W2g07NeVBMsKk/edit?tab=t.0)
+
+</details>
